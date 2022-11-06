@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-from test import Test
+from tests import TestSet
 
 # settings
 fileDialogWidth = 700
@@ -27,17 +27,15 @@ def fileChosen(sender, data):
 
 
 def test():
-    t = Test(filePath, fileName, fileNameNoExtension)
+    t = TestSet(filePath, fileName, fileNameNoExtension)
     print(t.getTests())
 
 
 def editTests():
-    testForFile = Test(filePath, fileName, fileNameNoExtension).getTests()
+    testForFile = TestSet(filePath, fileName, fileNameNoExtension).getTests()
     if testForFile is None:
         return
-    with dpg.window(label="Edit tests", width=windowWidth-20, height=windowHeight-20, no_resize=True, no_move=True):
-        with dpg.child(label="tests", width=windowWidth, height=windowHeight):
-
+    # with dpg.window(label="Edit tests", width=windowWidth-20, height=windowHeight-20, no_resize=True, no_move=True):
 
 
 def main():
