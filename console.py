@@ -20,7 +20,8 @@ def main():
     except Exception as e:
         print(e)
         return
-    print(t.getTests())
+    for test in t.tests:
+        t.tests[test].run()
 
 
 main()
