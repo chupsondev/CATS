@@ -54,22 +54,14 @@ class Test:
     def run(self):
         p = Popen([self.testedFilePath], stdout=PIPE, stdin=PIPE, stderr=PIPE)
         output = p.communicate(os.linesep.join(open(self.input).readlines()).encode())[0].decode()
-        if self.compareOutputs(output, open(self.output).read()):
-            print("Test " + str(path.basename(self.input).split(".")[0]) + " passed.")
-            for i in output:
-                if i == '\r':
-                    print("smth", end="")
-                print(str(i.encode()), end="\n")
-            print()
-            print()
-            for i in open(self.output).read():
-                print(str(i.encode()), end="\n")
+        if output.split() == open(self.output).read().split():
+            print("✅  Test " + str(path.basename(self.input).split(".")[0]) + " passed.")
         else:
-            print("Test " + str(path.basename(self.input).split(".")[0]) + " failed.")
+            print("❌  Test " + str(path.basename(self.input).split(".")[0]) + " failed.")
             print("\tExpected output: \n" + open(self.output).read())
             print("\tActual output:\n " + str(output))
 
-    def compareOutputs(self, out1, out2):
+    def compareOutpusts(self, out1, out2):
         out1Code = out1.encode()
         out2Code = out2.encode()
 
