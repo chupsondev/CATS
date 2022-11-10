@@ -1,7 +1,9 @@
 import os
+import time
 from os import listdir
 from os import path
 from subprocess import Popen, PIPE
+import themis_submitter
 
 
 class TestSet:
@@ -52,14 +54,20 @@ class Test:
         self.testedFilePath = testedFilePath
 
     def run(self):
+        timeStarted = time.time()
         p = Popen([self.testedFilePath], stdout=PIPE, stdin=PIPE, stderr=PIPE)
         output = p.communicate(os.linesep.join(open(self.input).readlines()).encode())[0].decode()
+        timeEnded = time.time()
+        runTime = timeEnded - timeStarted
         if output.split() == open(self.output).read().split():
-            print("✅  Test " + str(path.basename(self.input).split(".")[0]) + " passed.")
+            print("✅  Test " + str(path.basename(self.input).split(".")[0]) + " passed. Runtime: " + str(round(runTime, 10)) + " seconds.")
+
+            return True
         else:
-            print("❌  Test " + str(path.basename(self.input).split(".")[0]) + " failed.")
+            print("❌  Test " + str(path.basename(self.input).split(".")[0]) + " failed. Runtime: " + str(round(runTime, 10)) + " seconds.")
             print("\tExpected output: \n" + open(self.output).read())
             print("\tActual output:\n " + str(output))
+            return False
 
     def compareOutpusts(self, out1, out2):
         out1Code = out1.encode()
