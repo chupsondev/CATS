@@ -240,10 +240,13 @@ def main():
         os.system(f"notepad {settingsFile}")
 
     if options["settingsPrint"].active:
-        print(json.dumps(settings, indent=4))
+        cprint("Settings:", colors.OKBLUE, bold=True)
+        for setting in settings:
+            cprint(setting + ":", colors.DEF, bold=True, end=" ")
+            print(settings[setting])
 
     if options["settingsHelp"].active:
-        cprint("Settings:", colors.OKBLUE, bold=True)
+        cprint("Settings descriptions:", colors.OKBLUE, bold=True)
         print("themisUser: Your themis username")
         print("themisPass: Your themis password")
         print("themisGroup: The group you want to submit to")
