@@ -16,6 +16,8 @@ class TestSet:
     def setTests(self):
         filePath = self.filePath
         testsPath = path.join(path.dirname(filePath), self.fileNameNoExtension + "_tests")
+        if not path.exists(testsPath):
+            return False
         self.testsRaw = [path.join(testsPath, f) for f in listdir(testsPath) if path.isfile(path.join(testsPath, f))]
         self.tests = {}
 
@@ -40,7 +42,8 @@ class TestSet:
                 print("Test " + str(test) + " is missing an input or output file.")
         if len(self.tests) == 0:
             self.tests = None
-            raise Exception("There are no tests for this file, or some tests are incomplete.")
+            return False
+        return True
 
     def getTests(self):
         self.setTests()

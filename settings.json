@@ -1,0 +1,12 @@
+{
+    "themisUser": "",
+    "themisPass": "",
+    "themisGroup": "",
+    "buildDefaultValue": true,
+    "testDefaultValue": true,
+    "createDefaultValue": false,
+    "submitDefaultValue": false,
+    "runInputDefaultValue": false,
+    "runDefaultValue": false,
+    "helpDefaultValue": false
+}

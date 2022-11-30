@@ -3,6 +3,7 @@ from tests import TestResult
 import os
 import sys
 import themis_submitter
+import json
 
 themis_group = "SP762022_8"
 
@@ -129,10 +130,8 @@ def runTests(filePath, fileName, fileNameNoExtension):
         cprint("Can't test - file does not exist.", colors.WARNING)
         return
     t = TestSet(filePath, fileName, fileNameNoExtension)
-    try:
-        t.setTests()
-    except Exception as e:
-        print(e)
+    if not t.setTests():
+        cprint("Can't test - no valid tests found.", colors.WARNING)
         return
     allPassed = True
     for test in t.tests:
@@ -166,30 +165,56 @@ def help(options):
     cprint("Usage:", colors.OKBLUE, bold=True, end=" ")
     cprint("cats.py <file> [options]", colors.DEF)
     cprint("\nOptions:", colors.OKBLUE, bold=True)
+    cprint("If no options are specified, the program will run according to the settings file", colors.DEF, bold=True)
     for option in options:
         print(options[option])
 
 
+def loadSettings(options):
+    defaultSettings = {
+        "themisUser" : "",
+        "themisPass" : "",
+        "themisGroup" : "",
+        "buildDefaultValue" : True,
+        "testDefaultValue" : True,
+    }
+    for option in options:
+        if option + "DefaultValue" not in defaultSettings:
+            defaultSettings[option+"DefaultValue"] = False
+    if not os.path.exists("settings.json"):
+        open("settings.json", "w").write(json.dumps(defaultSettings, indent=4))
+    return json.load(open("settings.json", "r"))
+
+
 def main():
     options = {
+        "settings": Option("Opens the settings file in notepad", ["-s", "--settings"]),
+        "settingsPrint": Option("Prints the settings file", ["-sp", "--settings-print"]),
+        "settingsHelp": Option("Prints the settings file help", ["-sh", "--settings-help"]),
         "build": Option("Build the file (g++ compiler for c++ files)", ["-b", "--build"]),
         "test": Option("Run the tests and compare result to expected result", ["-t", "--test"]),
         "create": Option("Create tests", ["-c", "--create"]),
-        "submit": Option("Submit the file", ["-s", "--submit"]),
-        "runInput": Option("Run the file with inputs from tests", ["-i", "--input"]),
+        "submit": Option("Submit the file to themis. You need to set your username, password and group"
+                         "in the settings file.", ["-s", "--submit"]),
+        "runInput": Option("Run the file with inputs from tests", ["-ri", "--run-input"]),
         "run": Option("Run the file", ["-r", "--run"]),
         "help": Option("Show this help message", ["-h", "--help", "-?", "--?", "-wtf", "--wtf"])
     }
 
+    settings = loadSettings(options)
+
     if getOption(sys.argv[1], options) == "help":
         help(options)
         return
-    try:
-        file = sys.argv[1]
+    file = sys.argv[1]
+
+    args = []
+    if len(sys.argv) <= 2:
+        for option in options:
+            if option + "DefaultValue" in settings and settings[option + "DefaultValue"]:
+                options[option].setActive(True)
+    else:
         args = sys.argv[2:]
-    except Exception:
-        help(options)
-        return
 
     fileNameNoExtension = file
     fileNameExe = file + ".exe"
@@ -198,7 +223,6 @@ def main():
     filePathCpp = (os.getcwd() + "\\" + fileNameCpp)
 
     allPassed = True  # whether all tests passed. set to True in case no tests are run
-    noValidArgs = True
 
     for arg in args:
         if arg.startswith("-"):
@@ -207,11 +231,25 @@ def main():
                 cprint("Invalid option: " + arg, colors.FAIL)
             else:
                 options[option].setActive(True)  # if there is an option for the tag given, set it to active
-                noValidArgs = False
         else:
             cprint("Invalid option: " + arg, colors.FAIL)
 
-    if options["help"].active or noValidArgs:
+    if options["settings"].active:
+        programFolder = os.path.dirname(os.path.realpath(__file__))
+        settingsFile = pathify(programFolder + "\\settings.json")
+        os.system(f"notepad {settingsFile}")
+
+    if options["settingsPrint"].active:
+        print(json.dumps(settings, indent=4))
+
+    if options["settingsHelp"].active:
+        cprint("Settings:", colors.OKBLUE, bold=True)
+        print("themisUser: Your themis username")
+        print("themisPass: Your themis password")
+        print("themisGroup: The group you want to submit to")
+        print("{option}DefaultValue: Whether the option should be on if no arguments are given")
+
+    if options["help"].active:
         help(options)
         return
 
