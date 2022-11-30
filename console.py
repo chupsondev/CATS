@@ -52,6 +52,9 @@ class Option:
             return True
         return False
 
+    def __str__(self):
+        return f"{self.tags} - {self.description}"
+
 
 def getOption(tag, options):
     for option in options:
@@ -155,18 +158,21 @@ def runTestsWithoutResults(filePath, fileName, fileNameNoExtension):
         printTestResults(tr)
 
 
+def help(options):
+    cprint("Welcome to Chupson's Amazing Testing System (CATS)!", colors.HEADER, bold=True)
+    print("This program is designed to make testing and submitting code to themis easier. The usecase"
+          "is pretty limited, so in case it's ever used by someone else, please keep in mind that there's a"
+          "high chance that it won't work for you.")
+    cprint("Usage:", colors.OKBLUE, bold=True, end=" ")
+    cprint("cats.py <file> [options]", colors.DEF)
+    cprint("\nOptions:", colors.OKBLUE, bold=True)
+    for option in options:
+        print(options[option])
+
+
 def main():
-    file = sys.argv[1]
-    args = sys.argv[2:]
-
-    fileNameNoExtension = file
-    fileNameExe = file + ".exe"
-    filePathExe = (os.getcwd() + "\\" + fileNameExe)
-    fileNameCpp = file + ".cpp"
-    filePathCpp = (os.getcwd() + "\\" + fileNameCpp)
-
     options = {
-        "build": Option("Build the file", ["-b", "--build"]),
+        "build": Option("Build the file (g++ compiler for c++ files)", ["-b", "--build"]),
         "test": Option("Run the tests and compare result to expected result", ["-t", "--test"]),
         "create": Option("Create tests", ["-c", "--create"]),
         "submit": Option("Submit the file", ["-s", "--submit"]),
@@ -175,7 +181,24 @@ def main():
         "help": Option("Show this help message", ["-h", "--help", "-?", "--?", "-wtf", "--wtf"])
     }
 
+    if getOption(sys.argv[1], options) == "help":
+        help(options)
+        return
+    try:
+        file = sys.argv[1]
+        args = sys.argv[2:]
+    except Exception:
+        help(options)
+        return
+
+    fileNameNoExtension = file
+    fileNameExe = file + ".exe"
+    filePathExe = (os.getcwd() + "\\" + fileNameExe)
+    fileNameCpp = file + ".cpp"
+    filePathCpp = (os.getcwd() + "\\" + fileNameCpp)
+
     allPassed = True  # whether all tests passed. set to True in case no tests are run
+    noValidArgs = True
 
     for arg in args:
         if arg.startswith("-"):
@@ -184,8 +207,13 @@ def main():
                 cprint("Invalid option: " + arg, colors.FAIL)
             else:
                 options[option].setActive(True)  # if there is an option for the tag given, set it to active
+                noValidArgs = False
         else:
             cprint("Invalid option: " + arg, colors.FAIL)
+
+    if options["help"].active or noValidArgs:
+        help(options)
+        return
 
     if options["create"].active:  # if the create option is active, create tests
         testCount = int(input("How many tests do you want to create? "))
