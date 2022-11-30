@@ -73,11 +73,18 @@ def buildFile(filePath, filePathCpp):
 
 
 def createTests(testFolderPath, numTests):
+    maxNumberedTest = 0
     if os.path.exists(testFolderPath):
-        print("Test folder already exists. Adding tests is work in progress.", colors.WARNING)
-        return
-    os.mkdir(testFolderPath)
-    for i in range(1, numTests + 1):
+        testFiles = os.listdir(testFolderPath)
+        completeTests = []
+        maxNumberedTest = 0
+        for file in testFiles:
+            if file.split(".")[0].isnumeric():
+                if int(file.split(".")[0]) > maxNumberedTest:
+                    maxNumberedTest = int(file.split(".")[0])
+    else:
+        os.mkdir(testFolderPath)
+    for i in range(maxNumberedTest + 1, maxNumberedTest + numTests + 1):
         print("Please enter the input for test " + str(i) + ":")
         contents = []
         while True:
