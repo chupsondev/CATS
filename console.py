@@ -89,6 +89,20 @@ def runTests(filePath, fileName, fileNameNoExtension):
     return allPassed
 
 
+def runTestsWithoutResults(filePath, fileName, fileNameNoExtension):
+    if not os.path.exists(fileName):
+        print("File does not exist.")
+        return
+    t = TestSet(filePath, fileName, fileNameNoExtension)
+    try:
+        t.setTests()
+    except Exception as e:
+        print(e)
+        return
+    for test in t.tests:
+        print("\tOutput: \n" + '\t' + t.tests[test].runWithoutResult())
+
+
 def main():
     file = sys.argv[1]
     args = sys.argv[2:]
@@ -99,42 +113,51 @@ def main():
     fileNameCpp = file + ".cpp"
     filePathCpp = (os.getcwd() + "\\" + fileNameCpp)
 
-    buildOpt = False
-    runTestOpt = False
-    createTestsOpt = False
-    submitOpt = False
-
     options = {
         "build": Option("Build the file", ["-b", "--build"]),
-        "test": Option("Run the tests", ["-t", "--test"]),
+        "test": Option("Run the tests and compare result to expected result", ["-t", "--test"]),
         "create": Option("Create tests", ["-c", "--create"]),
         "submit": Option("Submit the file", ["-s", "--submit"]),
-        "run": Option("Run the file with input", ["-r", "--run"])
+        "runInput": Option("Run the file with inputs from tests", ["-i", "--input"]),
+        "run": Option("Run the file", ["-r", "--run"]),
+        "help": Option("Show this help message", ["-h", "--help", "-?", "--?", "-wtf", "--wtf"])
     }
 
-    allPassed = True  # whether all tests passed
+    allPassed = True  # whether all tests passed. set to True in case no tests are run
 
     for arg in args:
         if arg.startswith("-"):
-            option = getOption(arg, options)
+            option = getOption(arg, options)  # get the option that corresponds to the tag
             if option is None:
                 print("Invalid option: " + arg)
             else:
-                options[option].setActive(True)
+                options[option].setActive(True)  # if there is an option for the tag given, set it to active
         else:
             print("Invalid option: " + arg)
 
-    if buildOpt:
-        buildFile(filePathExe, filePathCpp)
-
-    if createTestsOpt:
+    if options["create"].active:  # if the create option is active, create tests
         testCount = int(input("How many tests do you want to create? "))
         testFolderPath = os.getcwd() + "\\" + fileNameNoExtension + "_tests"
         createTests(testFolderPath, testCount)
-    if runTestOpt:
-        allPassed = runTests(filePathExe, fileNameExe, fileNameNoExtension)
-    if submitOpt:
-        if allPassed:
+
+    if options["build"].active:  # if the build option is active, build the file
+        buildFile(filePathExe, filePathCpp)
+
+    if options["test"].active:  # if the test option is active, run the tests and compare the output to the expected
+        # output
+        allPassed = runTests(filePathExe, fileNameExe, fileNameNoExtension)  # runTests returns whether all tests passed
+
+    if options["runInput"].active:  # if the run option is active, run the file without comparing output to expected
+        # output
+        runTestsWithoutResults(filePathExe, fileNameExe, fileNameNoExtension)
+
+    if options["run"].active:  # if the run option is active, run the file without input
+        print("Running " + fileNameExe + "." + " Please enter input below if needed.")
+        os.system(pathify(filePathExe))
+        print("\nDone.")
+
+    if options["submit"].active:
+        if allPassed:  # if all tests passed, or none test were run, submit the file
             themis_submitter.sumbit(themis_submitter.auth(), themis_group,
                                     os.path.basename(fileNameNoExtension),
                                     filePathExe.split(".exe")[0] + ".cpp")
