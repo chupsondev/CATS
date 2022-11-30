@@ -1,9 +1,35 @@
 from tests import TestSet
+from tests import TestResult
 import os
 import sys
 import themis_submitter
 
 themis_group = "SP762022_8"
+
+
+class colors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    DEF = ''
+
+
+def cprint(text, color, end='\n', bold=False):
+    if bold:
+        color += colors.BOLD
+    print(color + text + colors.ENDC, end=end)
+
+
+def tabulate(text, tabs=1):
+    text = text.splitlines()
+    for i in range(len(text)):
+        text[i] = "\t" * tabs + " " + text[i]
+    return os.linesep.join(text)
 
 
 class Option:
@@ -39,14 +65,14 @@ def pathify(path):
 
 
 def buildFile(filePath, filePathCpp):
-    print("Building...")
+    print("Building " + os.path.basename(filePathCpp) + "...")
     os.system("g++ -o " + pathify(filePath) + " " + pathify(filePathCpp))
     print("Done.")
 
 
 def createTests(testFolderPath, numTests):
     if os.path.exists(testFolderPath):
-        print("Test folder already exists. Adding tests is work in progress.")
+        print("Test folder already exists. Adding tests is work in progress.", colors.WARNING)
         return
     os.mkdir(testFolderPath)
     for i in range(1, numTests + 1):
@@ -72,9 +98,32 @@ def createTests(testFolderPath, numTests):
         open(testFolderPath + "\\" + str(i) + ".out", "w").write(os.linesep.join(contents))
 
 
+def printTestResults(testResult: TestResult):
+    tr = testResult
+    if testResult.result is None:
+        cprint(tr.emoji + " Test " + str(tr.testName) + " finished. Runtime: " + str(round(tr.runTime, 5)) + " seconds."
+               , colors.OKBLUE, bold=True)
+        cprint("\tInput:", colors.DEF, bold=True)
+        print(tabulate(tr.input))
+        cprint("\tOutput:", colors.DEF, bold=True)
+        print(tabulate(tr.actual))
+    elif testResult.result:
+        cprint(tr.emoji + " Test " + str(tr.testName) + " passed. Runtime: " + str(round(tr.runTime, 5)) + " seconds.",
+               colors.OKGREEN, bold=True)
+    elif not testResult.result:
+        cprint(tr.emoji + " Test " + str(tr.testName) + " failed. Runtime: " + str(round(tr.runTime, 5)) + " seconds.",
+               colors.FAIL, bold=True)
+        cprint("\tInput:", colors.DEF, bold=True)
+        print(tabulate(tr.input))
+        cprint("\tExpected:", colors.DEF, bold=True)
+        print(tabulate(tr.expected))
+        cprint("\tActual:", colors.DEF, bold=True)
+        print(tabulate(tr.actual))
+
+
 def runTests(filePath, fileName, fileNameNoExtension):
     if not os.path.exists(fileName):
-        print("File does not exist.")
+        cprint("Can't test - file does not exist.", colors.WARNING)
         return
     t = TestSet(filePath, fileName, fileNameNoExtension)
     try:
@@ -84,14 +133,16 @@ def runTests(filePath, fileName, fileNameNoExtension):
         return
     allPassed = True
     for test in t.tests:
-        if not t.tests[test].run():
+        tr = t.tests[test].run()
+        printTestResults(tr)
+        if not tr.result:
             allPassed = False
     return allPassed
 
 
 def runTestsWithoutResults(filePath, fileName, fileNameNoExtension):
     if not os.path.exists(fileName):
-        print("File does not exist.")
+        cprint("Can't run with input - file does not exist.", colors.WARNING)
         return
     t = TestSet(filePath, fileName, fileNameNoExtension)
     try:
@@ -100,7 +151,8 @@ def runTestsWithoutResults(filePath, fileName, fileNameNoExtension):
         print(e)
         return
     for test in t.tests:
-        print("\tOutput: \n" + '\t' + t.tests[test].runWithoutResult())
+        tr = t.tests[test].runWithoutResult()
+        printTestResults(tr)
 
 
 def main():
@@ -129,11 +181,11 @@ def main():
         if arg.startswith("-"):
             option = getOption(arg, options)  # get the option that corresponds to the tag
             if option is None:
-                print("Invalid option: " + arg)
+                cprint("Invalid option: " + arg, colors.FAIL)
             else:
                 options[option].setActive(True)  # if there is an option for the tag given, set it to active
         else:
-            print("Invalid option: " + arg)
+            cprint("Invalid option: " + arg, colors.FAIL)
 
     if options["create"].active:  # if the create option is active, create tests
         testCount = int(input("How many tests do you want to create? "))
@@ -152,7 +204,7 @@ def main():
         runTestsWithoutResults(filePathExe, fileNameExe, fileNameNoExtension)
 
     if options["run"].active:  # if the run option is active, run the file without input
-        print("Running " + fileNameExe + "." + " Please enter input below if needed.")
+        cprint("Running " + fileNameExe + "." + " Please enter input below if needed.", colors.HEADER, bold=True)
         os.system(pathify(filePathExe))
         print("\nDone.")
 

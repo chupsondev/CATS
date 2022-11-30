@@ -113,7 +113,7 @@ def sumbit(cookies: str, group: str, task: str, filename: str):
         "Referer": url + group + '/' + task
     }
 
-    print('Running...')
+    print('Submitting...')
     while True:
         sleep(0.25)
         response = requests.get(url + group + "/result/" + ret_code, headers=headers2)
