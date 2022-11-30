@@ -1,7 +1,7 @@
 {
     "themisUser": "",
     "themisPass": "",
-    "themisGroup": "",
+    "themisGroup": "SP762022_8",
     "buildDefaultValue": true,
     "testDefaultValue": true,
     "createDefaultValue": false,

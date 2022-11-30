@@ -4,6 +4,7 @@ import os
 import sys
 import themis_submitter
 import json
+import webbrowser
 
 
 class colors:
@@ -205,6 +206,7 @@ def main():
                          "in the settings file.", ["-s", "--submit"]),
         "runInput": Option("Run the file with inputs from tests", ["-ri", "--run-input"]),
         "run": Option("Run the file", ["-r", "--run"]),
+        "problem": Option("Open the problem page on themis based on file name", ["-pr", "--problem"]),
         "help": Option("Show this help message", ["-h", "--help", "-?", "--?", "-wtf", "--wtf"])
     }
 
@@ -292,6 +294,9 @@ def main():
                                     filePathExe.split(".exe")[0] + ".cpp")
         else:
             print("Not submitting because not all tests passed.")
+
+    if options["problem"].active:
+        webbrowser.open("https://themis.ii.uni.wroc.pl/{}/".format(settings["themisGroup"]) + fileNameNoExtension)
 
 
 if __name__ == "__main__":
