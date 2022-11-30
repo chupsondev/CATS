@@ -6,6 +6,34 @@ import themis_submitter
 themis_group = "SP762022_8"
 
 
+class Option:
+    def __init__(self, description, tags, active=False):
+        self.tags = tags
+        self.description = description
+        self.active = active
+
+    def setTags(self, tags):
+        self.tags = tags
+
+    def setDescription(self, description):
+        self.description = description
+
+    def setActive(self, active):
+        self.active = active
+
+    def checkForTag(self, tag):
+        if tag in self.tags:
+            return True
+        return False
+
+
+def getOption(tag, options):
+    for option in options:
+        if options[option].checkForTag(tag):
+            return option
+    return None
+
+
 def pathify(path):
     return '"' + path + '"'
 
@@ -63,7 +91,6 @@ def runTests(filePath, fileName, fileNameNoExtension):
 
 def main():
     file = sys.argv[1]
-
     args = sys.argv[2:]
 
     fileNameNoExtension = file
@@ -72,37 +99,41 @@ def main():
     fileNameCpp = file + ".cpp"
     filePathCpp = (os.getcwd() + "\\" + fileNameCpp)
 
-    build = False
-    runTest_ = True
-    createTests_ = False
-    submit = False
-    allPassed = False
+    buildOpt = False
+    runTestOpt = False
+    createTestsOpt = False
+    submitOpt = False
+
+    options = {
+        "build": Option("Build the file", ["-b", "--build"]),
+        "test": Option("Run the tests", ["-t", "--test"]),
+        "create": Option("Create tests", ["-c", "--create"]),
+        "submit": Option("Submit the file", ["-s", "--submit"]),
+        "run": Option("Run the file with input", ["-r", "--run"])
+    }
+
+    allPassed = True  # whether all tests passed
 
     for arg in args:
-        if arg.startswith("/"):
-            if arg == "/b":
-                build = True
-            elif arg == "/n":
-                runTest_ = False
-            elif arg == "/t":
-                createTests_ = True
-            elif arg == "/s":
-                submit = True
+        if arg.startswith("-"):
+            option = getOption(arg, options)
+            if option is None:
+                print("Invalid option: " + arg)
             else:
-                print("Invalid argument: " + arg)
+                options[option].setActive(True)
         else:
-            print("Invalid argument: " + arg)
+            print("Invalid option: " + arg)
 
-    if build:
+    if buildOpt:
         buildFile(filePathExe, filePathCpp)
 
-    if createTests_:
+    if createTestsOpt:
         testCount = int(input("How many tests do you want to create? "))
         testFolderPath = os.getcwd() + "\\" + fileNameNoExtension + "_tests"
         createTests(testFolderPath, testCount)
-    if runTest_:
+    if runTestOpt:
         allPassed = runTests(filePathExe, fileNameExe, fileNameNoExtension)
-    if submit:
+    if submitOpt:
         if allPassed:
             themis_submitter.sumbit(themis_submitter.auth(), themis_group,
                                     os.path.basename(fileNameNoExtension),
