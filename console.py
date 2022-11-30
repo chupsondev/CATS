@@ -86,7 +86,7 @@ def createTests(testFolderPath, numTests):
             except EOFError:
                 break
             contents.append(line)
-        open(testFolderPath + "\\" + str(i) + ".in", "w").write("".join(contents))
+        open(testFolderPath + "\\" + str(i) + ".in", "w").write("\n".join(contents))
 
         print("Please enter the output for test " + str(i) + ":")
         contents = []
@@ -97,7 +97,7 @@ def createTests(testFolderPath, numTests):
                 break
             contents.append(line)
 
-        open(testFolderPath + "\\" + str(i) + ".out", "w").write("".join(contents))
+        open(testFolderPath + "\\" + str(i) + ".out", "w").write("\n".join(contents))
 
 
 def printTestResults(testResult: TestResult):
