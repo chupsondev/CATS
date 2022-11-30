@@ -5,8 +5,6 @@ import sys
 import themis_submitter
 import json
 
-themis_group = "SP762022_8"
-
 
 class colors:
     HEADER = '\033[95m'
@@ -171,24 +169,26 @@ def help(options):
 
 
 def loadSettings(options):
+    programFolder = os.path.dirname(os.path.realpath(__file__))
+    settingsFile = programFolder + "\\settings.json"
     defaultSettings = {
-        "themisUser" : "",
-        "themisPass" : "",
-        "themisGroup" : "",
-        "buildDefaultValue" : True,
-        "testDefaultValue" : True,
+        "themisUser": "",
+        "themisPass": "",
+        "themisGroup": "",
+        "buildDefaultValue": True,
+        "testDefaultValue": True,
     }
     for option in options:
         if option + "DefaultValue" not in defaultSettings:
-            defaultSettings[option+"DefaultValue"] = False
-    if not os.path.exists("settings.json"):
-        open("settings.json", "w").write(json.dumps(defaultSettings, indent=4))
-    return json.load(open("settings.json", "r"))
+            defaultSettings[option + "DefaultValue"] = False
+    if not os.path.exists(settingsFile):
+        open(settingsFile, "w").write(json.dumps(defaultSettings, indent=4))
+    return json.load(open(settingsFile, "r"))
 
 
 def main():
     options = {
-        "settings": Option("Opens the settings file in notepad", ["-s", "--settings"]),
+        "settings": Option("Opens the settings file in notepad", ["-se", "--settings"]),
         "settingsPrint": Option("Prints the settings file", ["-sp", "--settings-print"]),
         "settingsHelp": Option("Prints the settings file help", ["-sh", "--settings-help"]),
         "build": Option("Build the file (g++ compiler for c++ files)", ["-b", "--build"]),
@@ -279,7 +279,8 @@ def main():
 
     if options["submit"].active:
         if allPassed:  # if all tests passed, or none test were run, submit the file
-            themis_submitter.sumbit(themis_submitter.auth(), themis_group,
+            themis_submitter.sumbit(themis_submitter.auth(settings["themisUser"], settings["themisPass"])
+                                    , settings["themisGroup"],
                                     os.path.basename(fileNameNoExtension),
                                     filePathExe.split(".exe")[0] + ".cpp")
         else:

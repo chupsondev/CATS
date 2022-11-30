@@ -8,11 +8,8 @@ from requests_toolbelt import MultipartEncoder
 url = 'https://themis.ii.uni.wroc.pl/'
 host = 'themis.ii.uni.wroc.pl'
 
-login = 'wbrat'
-passwd = 'nielubieoij'
 
-
-def auth():
+def auth(login, passwd):
     response = requests.post(url + 'login', data={'userid': login, 'passwd': passwd},
                              headers={'Host': host, 'Referer': 'https://themis.ii.uni.wroc.pl/'})
     return response.request.headers['Cookie']
