@@ -5,6 +5,7 @@ from os import path
 from subprocess import Popen, PIPE
 
 
+
 class TestSet:
     def __init__(self, filePath, fileName, fileNameNoExtension):
         self.testsRaw = None
