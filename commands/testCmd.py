@@ -1,66 +1,13 @@
-from tests import TestSet
-from tests import TestResult
+from libraries.testsLib import TestSet
+from libraries.testsLib import TestResult
+from libraries import themis_submitter
+from libraries.printLib import cprint, tabulate, colors
+from libraries.optionLib import Option, getOption
+from libraries.settingsLib import loadSettings
 import os
 import sys
-import themis_submitter
 import json
 import webbrowser
-
-
-class colors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    DEF = ''
-
-
-def cprint(text, color, end='\n', bold=False):
-    if bold:
-        color += colors.BOLD
-    print(color + text + colors.ENDC, end=end)
-
-
-def tabulate(text, tabs=1):
-    text = text.splitlines()
-    for i in range(len(text)):
-        text[i] = "\t" * tabs + " " + text[i]
-    return os.linesep.join(text)
-
-
-class Option:
-    def __init__(self, description, tags, active=False):
-        self.tags = tags
-        self.description = description
-        self.active = active
-
-    def setTags(self, tags):
-        self.tags = tags
-
-    def setDescription(self, description):
-        self.description = description
-
-    def setActive(self, active):
-        self.active = active
-
-    def checkForTag(self, tag):
-        if tag in self.tags:
-            return True
-        return False
-
-    def __str__(self):
-        return f"{self.tags} - {self.description}"
-
-
-def getOption(tag, options):
-    for option in options:
-        if options[option].checkForTag(tag):
-            return option
-    return None
 
 
 def pathify(path):
@@ -176,25 +123,7 @@ def help(options):
         print(options[option])
 
 
-def loadSettings(options):
-    programFolder = os.path.dirname(os.path.realpath(__file__))
-    settingsFile = programFolder + "\\settings.json"
-    defaultSettings = {
-        "themisUser": "",
-        "themisPass": "",
-        "themisGroup": "",
-        "buildDefaultValue": True,
-        "testDefaultValue": True,
-    }
-    for option in options:
-        if option + "DefaultValue" not in defaultSettings:
-            defaultSettings[option + "DefaultValue"] = False
-    if not os.path.exists(settingsFile):
-        open(settingsFile, "w").write(json.dumps(defaultSettings, indent=4))
-    return json.load(open(settingsFile, "r"))
-
-
-def main():
+def main(args):
     options = {
         "settings": Option("Opens the settings file in notepad", ["-se", "--settings"]),
         "settingsPrint": Option("Prints the settings file", ["-sp", "--settings-print"]),
@@ -212,18 +141,17 @@ def main():
 
     settings = loadSettings(options)
 
-    if getOption(sys.argv[1], options) == "help":
+    if getOption(args[0], options) == "help":
         help(options)
         return
-    file = sys.argv[1]
+    file = args[0]
 
-    args = []
-    if len(sys.argv) <= 2:
+    if len(args) <= 2:
         for option in options:
             if option + "DefaultValue" in settings and settings[option + "DefaultValue"]:
                 options[option].setActive(True)
-    else:
-        args = sys.argv[2:]
+
+    args = args[1:]
 
     fileNameNoExtension = file
     fileNameExe = file + ".exe"
@@ -300,4 +228,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    args = sys.argv[1:]
+    main(args)

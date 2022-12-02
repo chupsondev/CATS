@@ -1,0 +1,16 @@
+{
+  "themisUser": "",
+  "themisPass": "",
+  "themisGroup": "",
+  "buildDefaultValue": true,
+  "testDefaultValue": true,
+  "settingsDefaultValue": false,
+  "settingsPrintDefaultValue": false,
+  "settingsHelpDefaultValue": false,
+  "createDefaultValue": false,
+  "submitDefaultValue": false,
+  "runInputDefaultValue": false,
+  "runDefaultValue": false,
+  "problemDefaultValue": false,
+  "helpDefaultValue": false
+}
