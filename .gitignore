@@ -3,3 +3,4 @@ __pycache__/*
 TEST.cpp
 TEST_tests/*
 TEST.exe
+*/__pycache__/*
