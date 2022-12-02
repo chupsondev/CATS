@@ -300,5 +300,5 @@ def main():
 
 
 if __name__ == "__main__":
-    print("hello world")
+    # branches are cool. now i should be on commands branch
     main()
