@@ -1,9 +1,9 @@
-from libraries.testsLib import TestSet
-from libraries.testsLib import TestResult
+from libraries.run import TestSet
+from libraries.run import TestResult
 from libraries import themis_submitter
-from libraries.printLib import cprint, tabulate, colors
-from libraries.optionLib import Option, getOption
-from libraries.settingsLib import loadSettings
+from libraries.print_lib import cprint, tabulate, colors
+from libraries.option_lib import Option, getOption
+from libraries.settings_lib import loadSettings
 import os
 import sys
 import json

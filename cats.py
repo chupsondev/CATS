@@ -1,8 +1,20 @@
-from libraries import printLib as pb
-
+from libraries import print_lib as pb
 import sys
+from commands import test_cmd
+from commands.Command import Command
 
-from commands import testCmd
+commands = {
+    "test": Command("test", "Test your code using a set of given inputs and expected outputs.",
+                    "cats.py test <file name no ext> [arguments]", ["t"]),
+    "build": Command("build", "Build your file (C++ - g++)", "cats.py build <file name no ext> [arguments]", ["b"]),
+    "run": Command("run", "Run your file. Can be run for input given in test files.",
+                   "cats.py run <file name no ext> [arguments]", ["r"]),
+    "submit": Command("submit",
+                      "Submit your file to themis. You need to set your username, password and group in the settings file.",
+                      "cats.py submit <file name no ext> [arguments]", ["s"]),
+    "open": Command("open", "Open the problem page on themis based on file name.",
+                    "cats.py open <file name no ext> [arguments]", ["o"]),
+}
 
 
 def main():
@@ -12,10 +24,13 @@ def main():
         pb.cprint("Usage:", pb.colors.OKBLUE, bold=True, end=" ")
         print("cats.py <command> <command arguments>")
         return
-    command = args[1]
+    aliasGiven = args[1]
     args = args[2:]
-    if command == "test":
-        testCmd.main(args)
+
+    command = Command.getCommand(aliasGiven, commands)
+    if command is None:
+        pb.cprint("Invalid command: " + aliasGiven, pb.colors.FAIL)
+        return
 
 
 if __name__ == "__main__":
