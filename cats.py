@@ -1,23 +1,21 @@
-from libraries import print_lib as pb
+import os
+import print_lib as pb
 import sys
 from commands import test_cmd
-from commands.Command import Command
+from Command import Command
+import settings_lib
 
 commands = {
     "test": Command("test", "Test your code using a set of given inputs and expected outputs.",
-                    "cats.py test <file name no ext> [arguments]", ["t"]),
-    "build": Command("build", "Build your file (C++ - g++)", "cats.py build <file name no ext> [arguments]", ["b"]),
-    "run": Command("run", "Run your file. Can be run for input given in test files.",
-                   "cats.py run <file name no ext> [arguments]", ["r"]),
-    "submit": Command("submit",
-                      "Submit your file to themis. You need to set your username, password and group in the settings file.",
-                      "cats.py submit <file name no ext> [arguments]", ["s"]),
-    "open": Command("open", "Open the problem page on themis based on file name.",
-                    "cats.py open <file name no ext> [arguments]", ["o"]),
+                    "cats.py test <file name no ext> [arguments]", ["t"], test_cmd.main, test_cmd.options),
 }
 
 
 def main():
+    launchLocation = os.getcwd()
+    programFolder = os.path.dirname(os.path.realpath(__file__))
+    settingsFileLocation = os.path.join(programFolder, "settings.json")
+    settings = settings_lib.Settings.loadSettings(commands, settingsFileLocation)
     args = sys.argv
     if len(args) <= 1:
         pb.cprint("You have to provide a command that is a part of CATS.", pb.colors.FAIL, bold=True)
@@ -31,7 +29,7 @@ def main():
     if command is None:
         pb.cprint("Invalid command: " + aliasGiven, pb.colors.FAIL)
         return
-
+    commands[command].run(args, settings, launchLocation)
 
 if __name__ == "__main__":
     main()

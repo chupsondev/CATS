@@ -1,8 +1,10 @@
 class Option:
-    def __init__(self, description, tags, active=False):
+    def __init__(self, name, description, tags, defaultValue, value=None):
+        self.name = name
         self.tags = tags
         self.description = description
-        self.active = active
+        self.defaultValue = defaultValue
+        self.value = defaultValue if value is None else value
 
     def setTags(self, tags):
         self.tags = tags
@@ -10,8 +12,14 @@ class Option:
     def setDescription(self, description):
         self.description = description
 
-    def setActive(self, active):
-        self.active = active
+    def setValue(self, value):
+        self.value = value
+
+    def getValue(self):
+        return self.value
+
+    def getName(self):
+        return self.name
 
     def checkForTag(self, tag):
         if tag in self.tags:

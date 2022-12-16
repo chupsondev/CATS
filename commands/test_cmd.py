@@ -1,12 +1,9 @@
-from libraries.run import TestSet
-from libraries.run import TestResult
-from libraries import themis_submitter
-from libraries.print_lib import cprint, tabulate, colors
-from libraries.option_lib import Option, getOption
-from libraries.settings_lib import loadSettings
-import os
+from run import TestSet
+from run import TestResult
+import themis_submitter
+from print_lib import cprint, tabulate, colors
+from option_lib import Option, getOption
 import sys
-import json
 import webbrowser
 
 
@@ -123,24 +120,23 @@ def help(options):
         print(options[option])
 
 
-def main(args):
-    options = {
-        "settings": Option("Opens the settings file in notepad", ["-se", "--settings"]),
-        "settingsPrint": Option("Prints the settings file", ["-sp", "--settings-print"]),
-        "settingsHelp": Option("Prints the settings file help", ["-sh", "--settings-help"]),
-        "build": Option("Build the file (g++ compiler for c++ files)", ["-b", "--build"]),
-        "test": Option("Run the tests and compare result to expected result", ["-t", "--test"]),
-        "create": Option("Create tests", ["-c", "--create"]),
-        "submit": Option("Submit the file to themis. You need to set your username, password and group"
-                         "in the settings file.", ["-s", "--submit"]),
-        "runInput": Option("Run the file with inputs from tests", ["-ri", "--run-input"]),
-        "run": Option("Run the file", ["-r", "--run"]),
-        "problem": Option("Open the problem page on themis based on file name", ["-pr", "--problem"]),
-        "help": Option("Show this help message", ["-h", "--help", "-?", "--?", "-wtf", "--wtf"])
-    }
+options = {
+    # "settings": Option("Opens the settings file in notepad", ["-se", "--settings"]),
+    # "settingsPrint": Option("Prints the settings file", ["-sp", "--settings-print"]),
+    # "settingsHelp": Option("Prints the settings file help", ["-sh", "--settings-help"]),
+    "build": Option("build", "Build the file (g++ compiler for c++ files)", ["-b", "--build"], True),
+    # "test": Option("Run the tests and compare result to expected result", ["-t", "--test"]),
+    # "create": Option("Create tests", ["-c", "--create"]),
+    "submit": Option("submit", "Submit the file to themis. You need to set your username, password and group"
+                               "in the settings file.", ["-s", "--submit"], True),
+    # "runInput": Option("Run the file with inputs from tests", ["-ri", "--run-input"]),
+    # "run": Option("Run the file", ["-r", "--run"]),
+    # "problem": Option("Open the problem page on themis based on file name", ["-pr", "--problem"]),
+    # "help": Option("Show this help message", ["-h", "--help", "-?", "--?", "-wtf", "--wtf"])
+}
 
-    settings = loadSettings(options)
 
+def main(args, settings, location):
     if getOption(args[0], options) == "help":
         help(options)
         return
@@ -229,4 +225,4 @@ def main(args):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    main(args)
+    main(args, None, os.getcwd())
