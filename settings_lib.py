@@ -26,3 +26,7 @@ class Settings:
                 optionName = optionObject.getName()
                 settings[commandName][optionName + "DefaultValue"] = optionObject.defaultValue
         open(settingsPath, "w").write(json.dumps(settings, indent=4))
+
+
+class Setting:  # a class for a setting, and option that is not specified in the command line, but in settings
+    pass

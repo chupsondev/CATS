@@ -1,10 +1,11 @@
 class Option:
-    def __init__(self, name, description, tags, defaultValue, value=None):
+    def __init__(self, name, description, tags, defaultValue, value=None, valueType: type = bool):
         self.name = name
         self.tags = tags
         self.description = description
         self.defaultValue = defaultValue
         self.value = defaultValue if value is None else value
+        self.valueType = valueType
 
     def setTags(self, tags):
         self.tags = tags
@@ -15,8 +16,17 @@ class Option:
     def setValue(self, value):
         self.value = value
 
+    def getType(self):
+        return self.valueType
+
+    def setDefaultValue(self, defaultValue):
+        self.defaultValue = defaultValue
+
     def getValue(self):
         return self.value
+
+    def getType(self):
+        return self.valueType
 
     def getName(self):
         return self.name
