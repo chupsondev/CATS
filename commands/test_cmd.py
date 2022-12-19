@@ -7,15 +7,11 @@ import sys
 import os
 import webbrowser
 
+from cats_tools import buildFile
+
 
 def pathify(path):
     return '"' + path + '"'
-
-
-def buildFile(filePath, filePathCpp):
-    print("Building " + os.path.basename(filePathCpp) + "...")
-    os.system("g++ -o " + pathify(filePath) + " " + pathify(filePathCpp))
-    print("Done.")
 
 
 def createTests(testFolderPath, numTests):
@@ -199,6 +195,7 @@ constantSettings = {
     "verbosePrintInput": True,
     "verbosePrintOutput": True,
     "verbosePrintExpected": True,
+    "quitAfterFailedBuild": True,
 }
 
 
@@ -226,7 +223,9 @@ def main(args, settings, location):
         return
 
     if options["build"].getValue() == True:  # if the build option is active, build the file
-        buildFile(filePathExe, filePathCpp)
+        exitCode = buildFile(filePathExe, filePathCpp)
+        if exitCode != 0:
+            return
 
     if options["test"].getValue() == False:
         allTestsPassed = runTests(filePathExe, fileNameCpp, fileNameNoExtension)

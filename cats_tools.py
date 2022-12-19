@@ -24,3 +24,25 @@ def tabulate(text, tabs=1):
     for i in range(len(text)):
         text[i] = "\t" * tabs + " " + text[i]
     return os.linesep.join(text)
+
+
+def isPath(path):
+    return "\\" in path or "/" in path
+
+
+def isRealPath(path):
+    return os.path.exists(path)
+
+
+def buildFile(filePath, filePathCpp):
+    print("Building " + os.path.basename(filePathCpp) + "...")
+    exitCode = os.system("g++ -o " + pathify(filePath) + " " + pathify(filePathCpp))
+    if exitCode != 0:
+        cprint("Build failed.", COLORS.FAIL)
+        return exitCode
+    print("Done.")
+    return exitCode
+
+
+def pathify(path):
+    return '"' + path + '"'
