@@ -4,32 +4,7 @@ from commands import test_cmd
 from Command import Command
 import settings_lib
 import os
-
-
-class COLORS:
-    VIOLET = '\033[95m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    DEF = ''
-
-
-def cprint(text, color, end='\n', bold=False):
-    if bold:
-        color += COLORS.BOLD
-    print(color + text + COLORS.ENDC, end=end)
-
-
-def tabulate(text, tabs=1):
-    text = text.splitlines()
-    for i in range(len(text)):
-        text[i] = "\t" * tabs + " " + text[i]
-    return os.linesep.join(text)
-
+from cats_tools import cprint, COLORS
 
 class CATSException(Exception):
     pass
@@ -49,12 +24,14 @@ class InvalidCommand(CATSException):
 
 commands = {
     "test": Command("test", "Test your code using a set of given inputs and expected outputs.",
-                    "cats.py test <file name no ext> [arguments]", ["t"], test_cmd.main, test_cmd.options),
+                    "cats.py test <file name no ext> [arguments]", ["t", "test"], test_cmd.main, test_cmd.options),
+    "build": Command("build", "Buil file using g++ compiler", "cats.py build <file name no ext> [arguments]",
+                     ["b", "build"], test_cmd.main, test_cmd.options),
 }
 
 
 def runCommand(command, args, settings, location):
-    commands[command].run(args, settings[command], location)
+    commands[command].run(args, settings[commands[command].getName()], location)
 
 
 def commandIsInvalid(command):

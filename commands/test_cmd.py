@@ -1,7 +1,7 @@
 from run import TestSet
 from run import TestResult
 import themis_submitter
-from cats import tabulate, cprint, COLORS
+from cats_tools import tabulate, cprint, COLORS
 from option_lib import Option, getOption
 import sys
 import os
@@ -93,6 +93,21 @@ def runTests(filePath, fileName, fileNameNoExtension):
     return allPassed
 
 
+def runSpecificTest(filePath, fileName, fileNameNoExtension, testCode):
+    if not os.path.exists(fileName):
+        cprint("Can't run test - file does not exist.", COLORS.WARNING)
+        return
+    t = TestSet(filePath, fileName, fileNameNoExtension)
+    if not t.setTests():
+        cprint("Can't run test - no valid tests found.", COLORS.WARNING)
+        return
+    if testCode not in t.tests:
+        cprint("Can't run test - test not found.", COLORS.WARNING)
+        return
+    tr = t.tests[testCode].run()
+    printTestResults(tr)
+
+
 def runTestsWithoutResults(filePath, fileName, fileNameNoExtension):
     if not os.path.exists(fileName):
         cprint("Can't run with input - file does not exist.", COLORS.WARNING)
@@ -126,7 +141,7 @@ def isArg(arg):
 
 
 def isValidOption(option):
-    return options is not None
+    return option is not None
 
 
 def getOptionsAndFileName(args):
@@ -139,8 +154,9 @@ def getOptionsAndFileName(args):
             if not isValidOption(option):
                 cprint("Invalid option: " + arg, COLORS.FAIL)
             else:
-                if option.getType() is not bool:
-                    option.setValue(arg.split("=")[1])
+                optionObject = options[option]
+                if optionObject.getType() is not bool:
+                    optionObject.setValue(arg.split("=")[1])
                 else:
                     validOptions.append(option)
         else:
@@ -152,7 +168,7 @@ def getOptionsAndFileName(args):
 
 def setOptionsToDefault(options, settings):
     for option in options:
-        optionName = options[option].getName()
+        optionName = options[option].getName() + "DefaultValue"
         options[option].setValue(settings[optionName])
 
 
@@ -160,6 +176,9 @@ def setOptions(optionArguments, options, settings):
     if len(optionArguments) == 0:
         setOptionsToDefault(options, settings)
         return
+    for option in options:
+        if options[option].getType() is bool:
+            options[option].setValue(False)
     for optionArgument in optionArguments:
         options[optionArgument].setValue(True)
 
@@ -172,6 +191,7 @@ options = {
                    valueType=str),
     "verbose": Option("verbose", "Print input, output, and expected output for all failed tests", ["-v", "--verbose"],
                       True),
+    "help": Option("help", "Print this help message", ["-h", "--help"], False),
 }
 
 constantSettings = {
@@ -183,7 +203,7 @@ constantSettings = {
 
 
 def main(args, settings, location):
-    if getOption(args[0], options) == "help":
+    if isArg(args[0]) and getOption(args[0], options) == "help":
         help(options)
         return
 
@@ -201,12 +221,18 @@ def main(args, settings, location):
     fileNameCpp = file + ".cpp"
     filePathCpp = (os.getcwd() + "\\" + fileNameCpp)
 
-    if options["help"].active:
+    if options["help"].getValue() == True:
         help(options)
         return
 
     if options["build"].getValue() == True:  # if the build option is active, build the file
         buildFile(filePathExe, filePathCpp)
+
+    if options["test"].getValue() == False:
+        allTestsPassed = runTests(filePathExe, fileNameCpp, fileNameNoExtension)
+
+    if options["test"].getValue() is not False:
+        runSpecificTest(filePathExe, fileNameCpp, fileNameNoExtension, options["test"].getValue())
 
     if options["submit"].getValue() == True:
         if allTestsPassed:  # if all tests passed, or none test were run, submit the file

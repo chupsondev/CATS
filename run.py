@@ -80,7 +80,7 @@ class Test:
 
     def run(self):
         timeStarted = time.time()
-        p = Popen([self.testedFilePath], stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        p = Popen(self.testedFilePath, stdout=PIPE, stdin=PIPE, stderr=PIPE)
         output = p.communicate(os.linesep.join(open(self.input).readlines()).encode())[0].decode()
         timeEnded = time.time()
         runTime = timeEnded - timeStarted

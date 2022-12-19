@@ -41,6 +41,8 @@ class Option:
 
 
 def getOption(tag, options):
+    tag = tag.split("=")[0]
+    tag = tag.lower()
     for option in options:
         if options[option].checkForTag(tag):
             return option

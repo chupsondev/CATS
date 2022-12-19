@@ -33,8 +33,8 @@ class Command:
     def setFunction(self, function):
         self.function = function
 
-    def run(self, args, settings=None):
-        self.function(args, settings)
+    def run(self, args, settings=None, location=None):
+        self.function(args, settings, location)
 
     def getOptions(self):
         return self.options
