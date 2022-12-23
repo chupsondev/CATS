@@ -1,0 +1,9 @@
+{
+    "test": {
+        "buildDefaultValue": true,
+        "submitDefaultValue": true,
+        "testDefaultValue": false,
+        "verboseDefaultValue": true,
+        "helpDefaultValue": false
+    }
+}

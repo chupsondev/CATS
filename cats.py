@@ -1,7 +1,6 @@
 import os
 import sys
-from commands import test_cmd
-from commands import build_cmd
+from commands import test_cmd, build_cmd, run_cmd
 from Command import Command
 import settings_lib
 import os
@@ -27,7 +26,7 @@ commands = {
     "test": Command("test", "Test your code using a set of given inputs and expected outputs.",
                     "cats.py test <file name no ext> [arguments]", ["t", "test"], test_cmd.main, test_cmd.options),
     "build": Command("build", "Buil file using g++ compiler", "cats.py build <file name no ext> [arguments]",
-                     ["b", "build"], build_cmd.main, build_cmd.options)
+                     ["b", "build"], build_cmd.main, build_cmd.options),
     "run": Command("run", "Run file specified, possibly using test inputs",
                    "cats.py run <file name no ext> [arguments]",
                    ["r", "run"], run_cmd.main, run_cmd.options)
