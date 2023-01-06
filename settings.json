@@ -1,12 +1,9 @@
 {
-    "themisUser": "",
-    "themisPass": "",
-    "themisGroup": "SP762022_8",
-    "buildDefaultValue": true,
-    "testDefaultValue": true,
-    "createDefaultValue": false,
-    "submitDefaultValue": false,
-    "runInputDefaultValue": false,
-    "runDefaultValue": false,
-    "helpDefaultValue": false
+    "test": {
+        "buildDefaultValue": true,
+        "submitDefaultValue": true,
+        "testDefaultValue": false,
+        "verboseDefaultValue": true,
+        "helpDefaultValue": false
+    }
 }
