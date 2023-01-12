@@ -4,3 +4,4 @@ TEST.cpp
 TEST_tests/*
 TEST.exe
 */__pycache__/*
+setup.sh

@@ -1,3 +1,5 @@
+# /usr/bin/python3
+
 import os
 import sys
 from commands import test_cmd, build_cmd, run_cmd
