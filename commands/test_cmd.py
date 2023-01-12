@@ -11,6 +11,7 @@ from cats_tools import *
 def pathify(path):
     return '"' + path + '"'
 
+
 def help(options):
     cprint("Welcome to Chupson's Amazing Testing System (CATS)!", COLORS.VIOLET, bold=True)
     print("This program is designed to make testing and submitting code to themis easier. The usecase"
@@ -22,7 +23,6 @@ def help(options):
     cprint("If no options are specified, the program will run according to the settings file", COLORS.DEF, bold=True)
     for option in options:
         print(options[option])
-
 
 
 options = {
@@ -60,9 +60,9 @@ def main(args, settings, location):
 
     fileNameNoExtension = file
     fileNameExe = file + ".exe"
-    filePathExe = (location + "\\" + fileNameExe)
+    filePathExe = os.path.join(location, fileNameExe)
     fileNameCpp = file + ".cpp"
-    filePathCpp = (location + "\\" + fileNameCpp)
+    filePathCpp = os.path.join(location, fileNameCpp)
 
     if options["help"].getValue() == True:
         help(options)
@@ -87,6 +87,7 @@ def main(args, settings, location):
                                     filePathExe.split(".exe")[0] + ".cpp")
         else:
             print("Not submitting because not all tests passed.")
+
 
 if __name__ == "__main__":
     args = sys.argv[1:]

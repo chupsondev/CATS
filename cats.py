@@ -6,6 +6,7 @@ import settings_lib
 import os
 from cats_tools import cprint, COLORS
 
+
 class CATSException(Exception):
     pass
 

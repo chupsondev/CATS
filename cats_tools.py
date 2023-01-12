@@ -38,12 +38,13 @@ def isRealPath(path):
 
 def buildFile(filePath, filePathCpp):
     print("Building " + os.path.basename(filePathCpp) + "...")
-    exitCode = os.system("g++ -o " + pathify(filePath) + " " + pathify(filePathCpp))
+    exitCode = os.system("g++ -o " + filePath + " " + filePathCpp)
     if exitCode != 0:
         cprint("Build failed.", COLORS.FAIL)
         return exitCode
     print("Done.")
     return exitCode
+
 
 def createTests(testFolderPath, numTests):
     maxNumberedTest = 0
@@ -52,8 +53,9 @@ def createTests(testFolderPath, numTests):
         completeTests = []
         maxNumberedTest = 0
         for file in testFiles:
-            if file.split(".")[0].isnumeric():
-                if int(file.split(".")[0]) > maxNumberedTest:
+            fileNoExtension = os.path.splitext(os.path.basename(file))[0]
+            if fileNoExtension.isnumeric():
+                if int(fileNoExtension) > maxNumberedTest:
                     maxNumberedTest = int(file.split(".")[0])
     else:
         os.mkdir(testFolderPath)
@@ -66,7 +68,7 @@ def createTests(testFolderPath, numTests):
             except EOFError:
                 break
             contents.append(line)
-        open(testFolderPath + "\\" + str(i) + ".in", "w").write("\n".join(contents))
+        open(os.path.join(testFolderPath, str(i) + ".in"), "w").write("\n".join(contents))
 
         print("Please enter the output for test " + str(i) + ":")
         contents = []
@@ -77,7 +79,7 @@ def createTests(testFolderPath, numTests):
                 break
             contents.append(line)
 
-        open(testFolderPath + "\\" + str(i) + ".out", "w").write("\n".join(contents))
+        open(os.path.join(testFolderPath, str(i)) + ".out", "w").write("\n".join(contents))
 
 
 def printTestResults(testResult: TestResult):
@@ -134,6 +136,7 @@ def runSpecificTest(filePath, fileName, fileNameNoExtension, testCode):
     tr = t.tests[testCode].run()
     printTestResults(tr)
 
+
 def runTestsWithoutResults(filePathExe):
     fileNameExe = os.path.basename(filePathExe)
     fileNameNoExtension = os.path.splitext(fileNameExe)[0]
@@ -150,8 +153,6 @@ def runTestsWithoutResults(filePathExe):
         tr = t.tests[test].runWithoutResult()
         printTestResults(tr)
 
-def pathify(path):
-    return '"' + path + '"'
 
 def isArg(arg):
     return arg.startswith("-")
@@ -159,6 +160,7 @@ def isArg(arg):
 
 def isValidOption(option):
     return option is not None
+
 
 def getOptionsAndFileName(args, options):
     validOptions = []

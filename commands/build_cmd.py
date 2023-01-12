@@ -19,6 +19,4 @@ def main(args, settings, location):
     fileName = os.path.basename(filePathNoExt)
     fileNameNoExt = os.path.splitext(fileName)[0]
 
-
-
     exitCode = buildFile(filePathNoExt, filePathCpp)
