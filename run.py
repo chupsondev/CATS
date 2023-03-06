@@ -5,7 +5,6 @@ from os import path
 from subprocess import Popen, PIPE
 
 
-
 class TestSet:
     def __init__(self, filePath, fileName, fileNameNoExtension):
         self.testsRaw = None
@@ -38,7 +37,7 @@ class TestSet:
                     self.tests[path.basename(test).split(".")[0]].output = test
         for test in self.tests:
             if self.tests[path.basename(test).split(".")[0]].input is None or self.tests[
-                    path.basename(test).split(".")[0]].output is None:
+                path.basename(test).split(".")[0]].output is None:
                 self.tests[path.basename(test).split(".")[0]] = None
                 print("Test " + str(test) + " is missing an input or output file.")
         if len(self.tests) == 0:

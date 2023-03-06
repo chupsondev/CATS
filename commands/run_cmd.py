@@ -8,8 +8,9 @@ options = {
     "build": Option("build", "Build the file (g++ compiler for c++ files)", ["-b", "--build"], True),
 }
 
+
 def main(args, settings, location):
-    validOptions, fileNameGiven =  getOptionsAndFileName(args, options)
+    validOptions, fileNameGiven = getOptionsAndFileName(args, options)
     setOptions(validOptions, options, settings)
 
     filePath = fileNameGiven if isPath(fileNameGiven) else os.path.join(location, fileNameGiven)
@@ -18,7 +19,7 @@ def main(args, settings, location):
     fileName = os.path.basename(filePathNoExt)
     fileNameNoExt = os.path.splitext(fileName)[0]
 
-    if options["build"].getValue() == True:
+    if options["build"].getValue() is True:
         buildFile(filePathNoExt, filePathCpp)
 
     if options["input"].getValue() is not False:
