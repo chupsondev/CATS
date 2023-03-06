@@ -38,7 +38,7 @@ def isRealPath(path):
 
 def buildFile(filePath, filePathCpp):
     print("Building " + os.path.basename(filePathCpp) + "...")
-    exitCode = os.system("g++ -o " + filePath + " " + filePathCpp)
+    exitCode = os.system("g++ -o " + filePath + ".exe" + " " + filePathCpp)
     if exitCode != 0:
         cprint("Build failed.", COLORS.FAIL)
         return exitCode

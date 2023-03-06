@@ -59,6 +59,7 @@ def main(args, settings, location):
     # values if no arguments were provided
 
     fileNameNoExtension = file
+    filePathNoExtension = os.path.join(location, fileNameNoExtension)
     fileNameExe = file + ".exe"
     filePathExe = os.path.join(location, fileNameExe)
     fileNameCpp = file + ".cpp"
@@ -69,7 +70,7 @@ def main(args, settings, location):
         return
 
     if options["build"].getValue() == True:  # if the build option is active, build the file
-        exitCode = buildFile(filePathExe, filePathCpp)
+        exitCode = buildFile(filePathNoExtension, filePathCpp)
         if exitCode != 0:
             return
 
