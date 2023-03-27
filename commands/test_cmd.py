@@ -1,4 +1,4 @@
-from run import TestSet
+from run import Tests
 from run import TestResult
 import themis_submitter
 from option_lib import Option, getOption
@@ -74,11 +74,16 @@ def main(args, settings, location):
         if exitCode != 0:
             return
 
+    tests = Tests(filePathNoExtension + ".exe")
+    tests.set_tests(location)
+
     if options["test"].getValue() == False:
-        allTestsPassed = runTests(filePathExe, fileNameCpp, fileNameNoExtension)
+        allTestsPassed = tests.run_tests()
+        tests.print_results()
 
     if options["test"].getValue() is not False:
-        runSpecificTest(filePathExe, fileNameCpp, fileNameNoExtension, options["test"].getValue())
+        allTestsPassed = tests.run_test(options["test"].getValue())
+        tests.print_results()
 
     if options["submit"].getValue() == True:
         if allTestsPassed:  # if all tests passed, or none test were run, submit the file
