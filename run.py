@@ -256,7 +256,9 @@ class Tests:
 
             input_file = get_static_test_file(file_set, STATIC_TEST_IN)
 
-            name = test_name_prefix + path.basename(file_set[0])
+            name = path.basename(file_set[0])
+            name = path.splitext(name)[0]
+            name = test_name_prefix + name
             tests.append(ScriptTest(name, self.tested_file_path, input_file, script_path))
 
         return tests
