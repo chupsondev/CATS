@@ -345,6 +345,16 @@ class Tests:
             all_passed = all_passed and test.result.passed
         return all_passed
 
+    def run_test(self, test_name: str):
+        test_name = test_name.replace("'", '') if test_name[0] == "'" else test_name.replace('"', '')
+        for test in self.tests:
+            if test.name == test_name:
+                test.judge()
+                return test.result.passed
+        print_error('Test ' + test_name + ' not found.')
+        return False
+
     def print_results(self):
         for test in self.tests:
-            test.print_result()
+            if test.result is not None:
+                test.print_result()
