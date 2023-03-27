@@ -1,6 +1,5 @@
 import os
 from option_lib import getOption
-from run import TestSet, TestResult, Test
 
 
 class COLORS:
@@ -22,7 +21,8 @@ def cprint(text, color, end='\n', bold=False):
 
 
 def tabulate(text, tabs=1):
-    text = text.splitlines()
+    if type(text) is str:
+        text = text.splitlines()
     for i in range(len(text)):
         text[i] = "\t" * tabs + " " + text[i]
     return os.linesep.join(text)
@@ -82,7 +82,7 @@ def createTests(testFolderPath, numTests):
         open(os.path.join(testFolderPath, str(i)) + ".out", "w").write("\n".join(contents))
 
 
-def printTestResults(testResult: TestResult):
+"""def printTestResults(testResult: TestResult):
     tr = testResult
     if testResult.result is None:
         cprint(tr.emoji + " Test " + str(tr.testName) + " finished. Runtime: " + str(round(tr.runTime, 5)) + " seconds."
@@ -103,7 +103,7 @@ def printTestResults(testResult: TestResult):
         print(tabulate(tr.expected))
         cprint("\tActual:", COLORS.DEF, bold=True)
         print(tabulate(tr.actual))
-
+"""
 
 def runTests(filePath, fileName, fileNameNoExtension):
     if not os.path.exists(fileName):
@@ -203,7 +203,8 @@ def setOptions(optionArguments, options, settings):
     for optionArgument in optionArguments:
         options[optionArgument].setValue(True)
 
-        def runTestsWithoutResults(filePath, fileName, fileNameNoExtension):
+
+"""        def runTestsWithoutResults(filePath, fileName, fileNameNoExtension):
             if not os.path.exists(fileName):
                 cprint("Can't run with input - file does not exist.", COLORS.WARNING)
                 return
@@ -215,7 +216,7 @@ def setOptions(optionArguments, options, settings):
                 return
             for test in t.tests:
                 tr = t.tests[test].runWithoutResult()
-                printTestResults(tr)
+                printTestResults(tr)"""
 
 
 def runExecutable(executablePath):
@@ -226,3 +227,7 @@ def runExecutable(executablePath):
     cprint("Running " + fileName + "... ", COLORS.VIOLET, bold=True)
     os.system(executablePath)
     print("\nDone.")
+
+
+def print_error(error):
+    cprint(error, COLORS.FAIL, bold=True)

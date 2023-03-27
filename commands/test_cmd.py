@@ -1,4 +1,4 @@
-from run import TestSet
+from run import Tests
 from run import TestResult
 import themis_submitter
 from option_lib import Option, getOption
@@ -75,7 +75,10 @@ def main(args, settings, location):
             return
 
     if options["test"].getValue() == False:
-        allTestsPassed = runTests(filePathExe, fileNameCpp, fileNameNoExtension)
+        tests = Tests(filePathNoExtension + ".exe")
+        tests.set_tests(location)
+        allTestsPassed = tests.run_tests()
+        tests.print_results()
 
     if options["test"].getValue() is not False:
         runSpecificTest(filePathExe, fileNameCpp, fileNameNoExtension, options["test"].getValue())
