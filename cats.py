@@ -2,7 +2,7 @@
 
 import os
 import sys
-from commands import test_cmd, build_cmd, run_cmd
+from commands import test_cmd, build_cmd, run_cmd, gentest_cmd
 from Command import Command
 import settings_lib
 import os
@@ -32,7 +32,10 @@ commands = {
                      ["b", "build"], build_cmd.main, build_cmd.options),
     "run": Command("run", "Run file specified, possibly using test inputs",
                    "cats.py run <file name no ext> [arguments]",
-                   ["r", "run"], run_cmd.main, run_cmd.options)
+                   ["r", "run"], run_cmd.main, run_cmd.options),
+    "gentest": Command("gentest", "Generates test using the specified generator",
+                       "cats.py gentest <file name no ext> [arguments]",
+                       ["g", "gentest"], gentest_cmd.main, gentest_cmd.options),
 }
 
 
