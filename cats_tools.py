@@ -231,6 +231,3 @@ def runExecutable(executablePath):
 
 def print_error(error):
     cprint(error, COLORS.FAIL, bold=True)
-
-
-# add improved getting tested file, support different input types. implement via file class or smth like that
