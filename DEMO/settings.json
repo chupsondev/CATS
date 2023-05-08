@@ -1,0 +1,17 @@
+{
+    "test": {
+        "buildDefaultValue": true,
+        "submitDefaultValue": true,
+        "testDefaultValue": false,
+        "verboseDefaultValue": true,
+        "helpDefaultValue": false,
+    "themisUser": "wbrat",
+    "themisPass": "omghubercik<3",
+    "themisGroup": "2022_POKRZ_8"
+    },
+    "build": {},
+    "run": {
+        "inputDefaultValue": false,
+        "buildDefaultValue": true
+    }
+}
