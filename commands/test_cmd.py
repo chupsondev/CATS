@@ -58,12 +58,14 @@ def main(args, settings, location):
                settings)  # sets the options' values to those provided by the arguments, and the default
     # values if no arguments were provided
 
-    fileNameNoExtension = file
-    filePathNoExtension = os.path.join(location, fileNameNoExtension)
-    fileNameExe = file + ".exe"
-    filePathExe = os.path.join(location, fileNameExe)
-    fileNameCpp = file + ".cpp"
-    filePathCpp = os.path.join(location, fileNameCpp)
+    tested_solution = SolutionFile(file)
+    fileNameNoExtension = tested_solution.name
+    filePathNoExtension = tested_solution.get_path_without_ext()
+    fileNameExe = tested_solution.name + ".exe"
+    filePathExe = tested_solution.get_path_without_ext() + ".exe"
+    fileNameCpp = tested_solution.name
+    filePathCpp = tested_solution.path
+
 
     if options["help"].getValue() == True:
         help(options)

@@ -13,11 +13,10 @@ def main(args, settings, location):
     validOptions, fileNameGiven = getOptionsAndFileName(args, options)
     setOptions(validOptions, options, settings)
 
-    filePath = fileNameGiven if isPath(fileNameGiven) else os.path.join(location, fileNameGiven)
-    filePathNoExt = os.path.splitext(filePath)[0]
-    filePathCpp = filePathNoExt + ".cpp"
-    fileName = os.path.basename(filePathNoExt)
-    fileNameNoExt = os.path.splitext(fileName)[0]
+    tested_solution = SolutionFile(fileNameGiven)
+
+    filePathNoExt = tested_solution.get_path_without_ext()
+    filePathCpp = tested_solution.path
 
     if options["build"].getValue() is True:
         buildFile(filePathNoExt, filePathCpp)

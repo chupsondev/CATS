@@ -9,14 +9,9 @@ def main(args, settings, location):
     filePath = None
     filePathCpp = None
     filePathNoExt = None
-    if not isPath(fileNameGiven):
-        filePath = os.path.join(location, fileNameGiven)
-    else:
-        filePath = fileNameGiven
 
-    filePathNoExt = os.path.splitext(filePath)[0]
-    filePathCpp = filePathNoExt + ".cpp"
-    fileName = os.path.basename(filePathNoExt)
-    fileNameNoExt = os.path.splitext(fileName)[0]
+    built_file = SolutionFile(fileNameGiven)
+    filePathNoExt = built_file.get_path_without_ext()
+    filePathCpp = built_file.path
 
     exitCode = buildFile(filePathNoExt, filePathCpp)

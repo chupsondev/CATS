@@ -1,5 +1,8 @@
 import os
+import sys
+
 from option_lib import getOption
+from enum import Enum
 
 
 class COLORS:
@@ -12,6 +15,9 @@ class COLORS:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     DEF = ''
+
+
+SUPPORTED_SOLUTION_EXT = ['.cpp', '.cc']
 
 
 def cprint(text, color, end='\n', bold=False):
@@ -104,6 +110,7 @@ def createTests(testFolderPath, numTests):
         cprint("\tActual:", COLORS.DEF, bold=True)
         print(tabulate(tr.actual))
 """
+
 
 def runTests(filePath, fileName, fileNameNoExtension):
     if not os.path.exists(fileName):
@@ -233,4 +240,82 @@ def print_error(error):
     cprint(error, COLORS.FAIL, bold=True)
 
 
-# add improved getting tested file, support different input types. implement via file class or smth like that
+def is_valid_solution_file(file_path):
+    extension = os.path.splitext(file_path)[1]
+    return extension in SUPPORTED_SOLUTION_EXT
+
+
+def name_from_path(path):
+    return os.path.splitext(os.path.basename(path))[0]
+
+
+class FILE_ARG_TYPES(Enum):
+    NAME = 1
+    FULL_PATH = 2
+    LOCAL_PATH = 3
+
+
+def get_file_arg_type(given_input):
+    if isPath(given_input):
+        if os.path.exists(given_input):
+            return FILE_ARG_TYPES.FULL_PATH
+        else:
+            return FILE_ARG_TYPES.LOCAL_PATH
+    return FILE_ARG_TYPES.NAME
+
+
+class SolutionFile:
+
+    def __init__(self, given_path, MAX_SEARCH_DEPTH=4):
+        self.MAX_SEARCH_DEPTH = MAX_SEARCH_DEPTH
+        self.name = None
+        self.path = None
+        given_path_type = get_file_arg_type(given_path)
+        self.given_path_type = given_path_type
+
+        if given_path_type is FILE_ARG_TYPES.FULL_PATH:
+            self.path = given_path
+            self.set_name()
+
+        elif given_path_type is FILE_ARG_TYPES.LOCAL_PATH:
+            self.path = os.path.abspath(given_path)
+            self.set_name()
+
+        elif given_path_type is FILE_ARG_TYPES.NAME:
+            self.path = self.search_for_file(given_path, os.getcwd())
+            if self.path is None:
+                print_error("Couldn't find provided file name in current working directory tree")
+                sys.exit(1)
+
+            self.set_name()
+
+        self.validate_path()
+
+
+    def search_for_file(self, searched_name, searched_dir, depth=0):
+        if depth > self.MAX_SEARCH_DEPTH:
+            return None
+        for file in os.listdir(searched_dir):
+            path = os.path.join(searched_dir, file)
+            if is_valid_solution_file(path) and name_from_path(path) == searched_name:
+                return os.path.join(searched_dir, file)
+            elif os.path.isdir(file):
+                subtree = self.search_for_file(searched_name, os.path.join(searched_dir, file), depth + 1)
+                if subtree is not None:
+                    return subtree
+
+    def set_name(self):
+        self.name = os.path.basename(self.path)
+        self.name = os.path.splitext(self.name)[0]
+
+
+    def validate_path(self):
+        if not os.path.exists(self.path):
+            print_error("Provided path doesn't exist")
+            sys.exit(1)
+        elif not os.path.isfile(self.path):
+            print_error("Provided path is not a file")
+
+    def get_path_without_ext(self):
+        return os.path.splitext(self.path)[0]
+
