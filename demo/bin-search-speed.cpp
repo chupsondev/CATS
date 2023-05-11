@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+#include <Windows.h>
+#include <cstdio>
 
 
 long long find_linear(long long n) {
@@ -34,6 +36,13 @@ long long bin_search(long long n, bool verbose = false) {
 }
 
 int main(int argc, char *argv[]) {
+        // Set console code page to UTF-8 so console known how to interpret string data
+    SetConsoleOutputCP(CP_UTF8);
+
+    // Enable buffering to prevent VS from chopping up UTF-8 byte sequences
+    setvbuf(stdout, nullptr, _IOFBF, 1000);
+
+
     long long n;
     bool verbose;
      if (argc <= 1) {
