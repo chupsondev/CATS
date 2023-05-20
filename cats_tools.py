@@ -249,6 +249,15 @@ def name_from_path(path):
     return os.path.splitext(os.path.basename(path))[0]
 
 
+def eval_file_candidate(candidate_path: str, goal_name: str):
+    candidate = None
+    if '.' in goal_name:
+        candidate = os.path.basename(candidate_path)
+    else:
+        candidate = name_from_path(candidate_path)
+    return candidate == goal_name
+
+
 class FILE_ARG_TYPES(Enum):
     NAME = 1
     FULL_PATH = 2
@@ -297,7 +306,7 @@ class SolutionFile:
             return None
         for file in os.listdir(searched_dir):
             path = os.path.join(searched_dir, file)
-            if is_valid_solution_file(path) and name_from_path(path) == searched_name:
+            if is_valid_solution_file(path) and eval_file_candidate(path, searched_name):
                 return os.path.join(searched_dir, file)
             elif os.path.isdir(file):
                 subtree = self.search_for_file(searched_name, os.path.join(searched_dir, file), depth + 1)
