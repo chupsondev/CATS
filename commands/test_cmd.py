@@ -1,6 +1,6 @@
 from run import Tests
 from run import TestResult
-import themis_submitter
+import themis
 from option_lib import Option, getOption
 import sys
 import os
@@ -89,10 +89,10 @@ def main(args, settings, location):
 
     if options["submit"].getValue() == True:
         if allTestsPassed:  # if all tests passed, or none test were run, submit the file
-            themis_submitter.sumbit(themis_submitter.auth(settings["themisUser"], settings["themisPass"])
-                                    , settings["themisGroup"],
-                                    os.path.basename(fileNameNoExtension),
-                                    filePathExe.split(".exe")[0] + ".cpp")
+            themis_client = themis.Themis(settings["themisUser"], settings["themisPass"])
+            print("Submitting...\n")
+            themis_client.submit(settings["themisGroup"], tested_solution.name, tested_solution.path) \
+                .print_result()
         else:
             print("Not submitting because not all tests passed.")
 
