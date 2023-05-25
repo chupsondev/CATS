@@ -9,6 +9,7 @@ options = {
 
 
 def main(args, settings, location):
+    settings = settings["run"]
     validOptions, fileNameGiven = getOptionsAndFileName(args, options)
     setOptions(validOptions, options, settings)
 

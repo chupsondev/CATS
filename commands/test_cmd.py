@@ -46,6 +46,10 @@ constantSettings = {
 
 
 def main(args, settings, location):
+    themis_group: str = settings["themisGroup"]
+    themis_user: str = settings["themisUser"]
+    themis_pass: str = settings["themisPass"]
+    settings = settings["test"]
     if isArg(args[0]) and getOption(args[0], options) == "help":
         help(options)
         return
@@ -89,9 +93,9 @@ def main(args, settings, location):
 
     if options["submit"].getValue() == True:
         if allTestsPassed:  # if all tests passed, or none test were run, submit the file
-            themis_client = themis.Themis(settings["themisUser"], settings["themisPass"])
+            themis_client = themis.Themis(themis_user, themis_pass)
             print("Submitting...\n")
-            themis_client.submit(settings["themisGroup"], tested_solution.name, tested_solution.path) \
+            themis_client.submit(themis_group, tested_solution.name, tested_solution.path) \
                 .print_result()
         else:
             print("Not submitting because not all tests passed.")

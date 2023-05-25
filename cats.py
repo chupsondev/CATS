@@ -42,7 +42,7 @@ commands = {
 def runCommand(command, args, settings, location):
     if command not in settings:
         settings[command] = {}
-    commands[command].run(args, settings[commands[command].getName()], location)
+    commands[command].run(args, settings, location)
 
 
 def commandIsInvalid(command):
