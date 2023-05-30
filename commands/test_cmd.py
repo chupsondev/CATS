@@ -46,9 +46,12 @@ constantSettings = {
 
 
 def main(args, settings, location):
-    themis_group: str = settings["themisGroup"]
-    themis_user: str = settings["themisUser"]
-    themis_pass: str = settings["themisPass"]
+    try:
+        themis_group: str = settings["themisGroup"]
+        themis_user: str = settings["themisUser"]
+        themis_pass: str = settings["themisPass"]
+    except KeyError:
+        pass
     settings = settings["test"]
     if isArg(args[0]) and getOption(args[0], options) == "help":
         help(options)
