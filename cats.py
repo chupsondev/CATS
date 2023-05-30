@@ -7,6 +7,7 @@ from Command import Command
 import settings_lib
 import os
 from cats_tools import cprint, COLORS
+import options_parser
 
 
 class CATSException(Exception):
@@ -39,10 +40,10 @@ commands = {
 }
 
 
-def runCommand(command, args, settings, location):
+def runCommand(command, options, settings, location):
     if command not in settings:
         settings[command] = {}
-    commands[command].run(args, settings, location)
+    commands[command].run(options, settings, location)
 
 
 def commandIsInvalid(command):
@@ -55,20 +56,22 @@ def main():
     settingsFileLocation = os.path.join(programFolder, "settings.json")
     settings = settings_lib.Settings.loadSettings(commands, settingsFileLocation)
 
-    args = sys.argv[1:]
+    options = sys.argv[1:]
 
-    if len(args) < 1:
+    if len(options) < 1:
         raise NoCommandSpecified()
 
-    aliasGiven = args[0]
-    args = args[1:]
+    aliasGiven = options[0]
+    options = options[1:]
 
     command = Command.getCommand(aliasGiven, commands)
 
     if commandIsInvalid(command):
         raise InvalidCommand(aliasGiven)
 
-    runCommand(command, args, settings, launchLocation)
+    options = options_parser.OptionsParser(options, commands[command], settings[commands[command].name])
+
+    runCommand(command, options, settings, launchLocation)
 
 
 if __name__ == "__main__":

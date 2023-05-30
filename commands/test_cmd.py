@@ -6,6 +6,7 @@ import sys
 import os
 import webbrowser
 from cats_tools import *
+import options_parser
 
 
 def pathify(path):
@@ -45,7 +46,7 @@ constantSettings = {
 }
 
 
-def main(args, settings, location):
+def main(current_options: options_parser.OptionsParser, settings, location):
     try:
         themis_group: str = settings["themisGroup"]
         themis_user: str = settings["themisUser"]
@@ -53,17 +54,15 @@ def main(args, settings, location):
     except KeyError:
         pass
     settings = settings["test"]
-    if isArg(args[0]) and getOption(args[0], options) == "help":
+    options = current_options.get_options()
+    if current_options.get_options()["help"]:
         help(options)
         return
 
     allTestsPassed = True
     validOptionsFound = False
-
-    optionArguments, file = getOptionsAndFileName(args, options)
-    setOptions(optionArguments, options,
-               settings)  # sets the options' values to those provided by the arguments, and the default
-    # values if no arguments were provided
+    
+    file = current_options.get_arguments()[0]
 
     tested_solution = SolutionFile(file)
     fileNameNoExtension = tested_solution.name
@@ -74,11 +73,11 @@ def main(args, settings, location):
     filePathCpp = tested_solution.path
 
 
-    if options["help"].getValue() == True:
-        help(options)
+    if current_options["help"].getValue() == True:
+        help(current_options)
         return
 
-    if options["build"].getValue() == True:  # if the build option is active, build the file
+    if current_options["build"].getValue() == True:  # if the build option is active, build the file
         exitCode = buildFile(filePathNoExtension, filePathCpp)
         if exitCode != 0:
             return
@@ -86,15 +85,15 @@ def main(args, settings, location):
     tests = Tests(filePathNoExtension + ".exe")
     tests.set_tests(location)
 
-    if options["test"].getValue() == False:
+    if current_options["test"].getValue() == False:
         allTestsPassed = tests.run_tests()
         tests.print_results()
 
-    if options["test"].getValue() is not False:
-        allTestsPassed = tests.run_test(options["test"].getValue())
+    if current_options["test"].getValue() is not False:
+        allTestsPassed = tests.run_test(current_options["test"].getValue())
         tests.print_results()
 
-    if options["submit"].getValue() == True:
+    if current_options["submit"].getValue() == True:
         if allTestsPassed:  # if all tests passed, or none test were run, submit the file
             themis_client = themis.Themis(themis_user, themis_pass)
             print("Submitting...\n")
