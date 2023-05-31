@@ -55,7 +55,7 @@ def main(current_options: options_parser.OptionsParser, settings, location):
         pass
     settings = settings["test"]
     options = current_options.get_options()
-    if current_options.get_options()["help"]:
+    if options["help"].getValue():
         help(options)
         return
 
@@ -73,11 +73,11 @@ def main(current_options: options_parser.OptionsParser, settings, location):
     filePathCpp = tested_solution.path
 
 
-    if current_options["help"].getValue() == True:
+    if options["help"].getValue() == True:
         help(current_options)
         return
 
-    if current_options["build"].getValue() == True:  # if the build option is active, build the file
+    if options["build"].getValue() == True:  # if the build option is active, build the file
         exitCode = buildFile(filePathNoExtension, filePathCpp)
         if exitCode != 0:
             return
@@ -85,15 +85,15 @@ def main(current_options: options_parser.OptionsParser, settings, location):
     tests = Tests(filePathNoExtension + ".exe")
     tests.set_tests(location)
 
-    if current_options["test"].getValue() == False:
+    if options["test"].getValue() == False:
         allTestsPassed = tests.run_tests()
         tests.print_results()
 
-    if current_options["test"].getValue() is not False:
-        allTestsPassed = tests.run_test(current_options["test"].getValue())
+    if options["test"].getValue() is not False:
+        allTestsPassed = tests.run_test(options["test"].getValue())
         tests.print_results()
 
-    if current_options["submit"].getValue() == True:
+    if options["submit"].getValue() == True:
         if allTestsPassed:  # if all tests passed, or none test were run, submit the file
             themis_client = themis.Themis(themis_user, themis_pass)
             print("Submitting...\n")
