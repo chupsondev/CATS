@@ -2,7 +2,7 @@
 
 import os
 import sys
-from commands import test_cmd, build_cmd, run_cmd, gentest_cmd
+from commands import test, build, run, gentest
 from Command import Command
 import settings_lib
 import os
@@ -28,15 +28,15 @@ class InvalidCommand(CATSException):
 
 commands = {
     "test": Command("test", "Test your code using a set of given inputs and expected outputs.",
-                    "cats.py test <file name no ext> [arguments]", ["t", "test"], test_cmd.main, test_cmd.options),
+                    "cats.py test <file name no ext> [arguments]", ["t", "test"], test.main, test.options),
     "build": Command("build", "Buil file using g++ compiler", "cats.py build <file name no ext> [arguments]",
-                     ["b", "build"], build_cmd.main, build_cmd.options),
+                     ["b", "build"], build.main, build.options),
     "run": Command("run", "Run file specified, possibly using test inputs",
                    "cats.py run <file name no ext> [arguments]",
-                   ["r", "run"], run_cmd.main, run_cmd.options),
+                   ["r", "run"], run.main, run.options),
     "gentest": Command("gentest", "Generates test using the specified generator",
                        "cats.py gentest <file name no ext> [arguments]",
-                       ["g", "gentest"], gentest_cmd.main, gentest_cmd.options),
+                       ["g", "gentest"], gentest.main, gentest.options),
 }
 
 
