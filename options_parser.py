@@ -24,8 +24,7 @@ def disable_all_options(options, exclude=None):
 def default_options(options, settings):
     for opt in options:
         opt = options[opt]
-        opt.setValue(settings[opt.getName() + "DefaultValue"])  # adding "DefaultValue" should not be, and will
-        # be removed with settings system update - TODO
+        opt.setValue(settings[opt.getName()])  
 
 
 

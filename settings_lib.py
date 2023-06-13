@@ -24,7 +24,7 @@ class Settings:
             for option in commandOptions:
                 optionObject = commandOptions[option]
                 optionName = optionObject.getName()
-                settings[commandName][optionName + "DefaultValue"] = optionObject.defaultValue
+                settings[commandName][optionName] = optionObject.defaultValue
         open(settingsPath, "w").write(json.dumps(settings, indent=4))
 
 
