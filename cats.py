@@ -5,7 +5,6 @@ import sys
 from commands import test, build, run, gentest
 from Command import Command
 import settings_lib
-import os
 from cats_tools import cprint, COLORS
 import options_parser
 
