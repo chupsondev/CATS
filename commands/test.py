@@ -34,7 +34,6 @@ options = {
                    valueType=str),
     "verbose": Option("verbose", "Print input, output, and expected output for all failed tests", ["-v", "--verbose"],
                       True),
-    "help": Option("help", "Print this help message", ["-h", "--help"], False),
 }
 
 constantSettings = {
