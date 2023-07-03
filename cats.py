@@ -42,7 +42,7 @@ def help(options: options_parser.OptionsParser, settings, location):
         option_print = f'{option.name} - {option.description} (default: {option.defaultValue})'
         print(tabulate(option_print))
 
-    if queried_command.name is "help":
+    if queried_command.name == "help":
         cprint("Available commands: ", COLORS.DEF, bold=True)
         for command in commands:
             print(tabulate(f'{command} -- {commands[command].description}'))
