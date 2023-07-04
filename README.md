@@ -9,7 +9,7 @@ CATS has mulitple sub-commands. All of them are discribed below.
 ## `test`
 <pre>
 cats test <i>solution file [options]</i>
-<pre>
+</pre>
 
 This command tests a given solution file, using a set of tests predefined by the user. You must provide a solution file to be tested - you can either give just the name of that file, a name and an extension, or the full path. For now, the only supported files are those with the `.cpp` extension.
 
