@@ -1,17 +1,20 @@
 <h1 align = center> CATS </h1>
 <p align = center> Welcome to CATS -- Competitive Algorithm Tool Set </p>
-This is a simple program, a set of tools, for testing solutions to competitive programmiing problems.
+This is a simple program, a set of tools, mostly for testing solutions to competitive programming problems.
 
 
 # Commands 
 CATS has mulitple sub-commands. All of them are discribed below.
 
 ## `test`
-`cats test *solution file [options]*`
+<pre>
+cats test <i>solution file [options]</i>
+<pre>
+
 This command tests a given solution file, using a set of tests predefined by the user. You must provide a solution file to be tested - you can either give just the name of that file, a name and an extension, or the full path. For now, the only supported files are those with the `.cpp` extension.
 
 ### Options
-- `--build` or `-b``
+- `--build` or `-b`
     - build the solution file
 - `--submit` or `-s`
     - submit the solution to themis, if all tests passed
@@ -19,16 +22,26 @@ This command tests a given solution file, using a set of tests predefined by the
     - if provided, run only the test given, instead of all of them
 
 ##  `build`
-`cats build *solution file*`
+<pre>
+cats build <i>solution file</i>
+</pre>
+
 Builds the solution file given.
 
 ## `run`
-`cats run *solution file [options]*`
+<pre>
+cats run <i>solution file [options]</i>
+</pre>
+
 Runs solution file.
+
 **CURRENTLY BROKEN**
 
 ## `gentest`
-`cats run *solution file [options]*`
+<pre>
+cats run <i>solution file [options]</i>
+</pre>
+
 Generates tests for the given solution, using your own generator, or one of the generators built-in to CATS.
 
 ### Options
