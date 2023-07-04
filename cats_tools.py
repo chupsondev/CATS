@@ -5,6 +5,8 @@ from option_lib import getOption
 from enum import Enum
 
 
+GENERIC_TEST_FOLDER_NAMES = ['tests']
+
 class COLORS:
     VIOLET = '\033[95m'
     BLUE = '\033[94m'
@@ -240,9 +242,9 @@ def print_error(error):
     cprint(error, COLORS.FAIL, bold=True)
 
 
-def is_valid_solution_file(file_path):
+def is_valid_solution_file(file_path, accepted_extensions=SUPPORTED_SOLUTION_EXT):
     extension = os.path.splitext(file_path)[1]
-    return extension in SUPPORTED_SOLUTION_EXT
+    return extension in accepted_extensions
 
 
 def name_from_path(path):
@@ -275,7 +277,9 @@ def get_file_arg_type(given_input):
 
 class SolutionFile:
 
-    def __init__(self, given_path, MAX_SEARCH_DEPTH=4):
+    def __init__(self, given_path, MAX_SEARCH_DEPTH=4, allowed_extensions=SUPPORTED_SOLUTION_EXT):
+        self.allowed_extensions = allowed_extensions
+
         self.MAX_SEARCH_DEPTH = MAX_SEARCH_DEPTH
         self.name = None
         self.path = None
@@ -306,7 +310,7 @@ class SolutionFile:
             return None
         for file in os.listdir(searched_dir):
             path = os.path.join(searched_dir, file)
-            if is_valid_solution_file(path) and eval_file_candidate(path, searched_name):
+            if is_valid_solution_file(path, self.allowed_extensions) and eval_file_candidate(path, searched_name):
                 return os.path.join(searched_dir, file)
             elif os.path.isdir(file):
                 subtree = self.search_for_file(searched_name, os.path.join(searched_dir, file), depth + 1)
@@ -328,3 +332,48 @@ class SolutionFile:
     def get_path_without_ext(self):
         return os.path.splitext(self.path)[0]
 
+
+# Searching for tests
+def is_generic_tests_folder(folder_name):
+    return folder_name in GENERIC_TEST_FOLDER_NAMES
+
+def is_test_folder(tested_file_name, folder_name):
+    if tested_file_name in folder_name and 'test' in folder_name:
+        return True
+    return False
+
+def search_generic_tests_folder(tested_file_name, directory, level=0, MAX_SEARCH_DEPTH=4):
+    test_folders = []
+    if level > MAX_SEARCH_DEPTH:
+        return test_folders
+    for file in os.listdir(directory):
+        file_path = os.path.join(directory, file)
+        if os.path.isdir(file_path):
+            if file == tested_file_name:
+                test_folders.append(file_path)
+            else:
+                test_folders += (search_generic_tests_folder(tested_file_name, file_path, level + 1, MAX_SEARCH_DEPTH))
+    return test_folders
+
+def find_test_folders(tested_file_name, directory, level=0, MAX_SEARCH_DEPTH=4):
+    """
+    Recursively searches for all test folders named correctly that could potentially contain tests.
+    Returns list of folder paths.
+    :rtype: list
+    :arg directory: directory to search in
+    :arg level: current search depth
+    :return: list of test folders
+    """
+    test_folders = []
+    if level > MAX_SEARCH_DEPTH:
+        return test_folders
+    for file in os.listdir(directory):
+        file_path = os.path.join(directory, file)
+        if os.path.isdir(file_path):
+            if is_test_folder(tested_file_name, file):
+                test_folders.append(file_path)
+            elif is_generic_tests_folder(file):
+                test_folders += search_generic_tests_folder(tested_file_name, file_path, level + 1, MAX_SEARCH_DEPTH)
+            else:
+                test_folders += find_test_folders(tested_file_name, file_path, level + 1)
+    return test_folders

@@ -5,10 +5,10 @@ from os import listdir
 from os import path
 from subprocess import Popen, PIPE
 from cats_tools import cprint, COLORS, print_error, buildFile, tabulate
+from cats_tools import find_test_folders
 import importlib.util
 
 
-GENERIC_TEST_FOLDER_NAMES = ['tests']
 MAX_SEARCH_DEPTH_ = 4
 STATIC_TEST_EXTENSIONS = ['.in', '.out']
 STATIC_TEST_OUT = '.out'
@@ -199,50 +199,6 @@ class Tests:
         self.MAX_SEARCH_DEPTH = MAX_SEARCH_DEPTH
         self.tests = []
 
-    @staticmethod
-    def is_generic_tests_folder(folder_name):
-        return folder_name in GENERIC_TEST_FOLDER_NAMES
-
-    def is_test_folder(self, folder_name):
-        if self.tested_file_name in folder_name and 'test' in folder_name:
-            return True
-        return False
-
-    def search_generic_tests_folder(self, directory, level=0):
-        test_folders = []
-        if level > self.MAX_SEARCH_DEPTH:
-            return test_folders
-        for file in listdir(directory):
-            file_path = path.join(directory, file)
-            if path.isdir(file_path):
-                if file == self.tested_file_name:
-                    test_folders.append(file_path)
-                else:
-                    test_folders += (self.search_generic_tests_folder(file_path, level + 1))
-        return test_folders
-
-    def find_test_folders(self, directory, level=0):
-        """
-        Recursively searches for all test folders named correctly that could potentially contain tests.
-        Returns list of folder paths.
-        :rtype: list
-        :arg directory: directory to search in
-        :arg level: current search depth
-        :return: list of test folders
-        """
-        test_folders = []
-        if level > self.MAX_SEARCH_DEPTH:
-            return test_folders
-        for file in listdir(directory):
-            file_path = path.join(directory, file)
-            if path.isdir(file_path):
-                if self.is_test_folder(file):
-                    test_folders.append(file_path)
-                elif self.is_generic_tests_folder(file):
-                    test_folders += self.search_generic_tests_folder(file_path, level + 1)
-                else:
-                    test_folders += self.find_test_folders(file_path, level + 1)
-        return test_folders
 
     def add_script_tests(self, file_sets, script_path, test_name_prefix):
 
@@ -334,7 +290,7 @@ class Tests:
         return tests
 
     def set_tests(self, folder):
-        test_folders = self.find_test_folders(folder)
+        test_folders = find_test_folders(self.tested_file_name, folder, MAX_SEARCH_DEPTH=self.MAX_SEARCH_DEPTH)
         self.tests = []
         for folder in test_folders:
             self.tests += self.get_tests(folder)
