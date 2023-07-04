@@ -2,8 +2,8 @@ import option_lib
 
 
 class Command:
-    def __init__(self, name: str, description: str, usage: str, aliases: list[str], function=None, options: list[
-        option_lib.Option] = None):
+    def __init__(self, name: str, description: str, usage: str, aliases: list[str], function=None,
+                 options: list[option_lib.Option] = None):
         self.name = name
         self.description = description
         self.usage = usage
