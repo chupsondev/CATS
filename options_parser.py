@@ -65,6 +65,8 @@ class OptionsParser:
                 toggled_options.append(option.getName())
             elif not is_option and last_option is not None:
                 option = self.options[last_option]
+                if option.getType() is int:
+                    option.setValue(int(arg))
                 if option.getType() is not bool:
                     option.setValue(arg)
 
