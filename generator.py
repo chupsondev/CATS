@@ -9,12 +9,14 @@ import sys
 
 class Generator:
 
-    def __init__(self, generator_path: str, tested_file_name: str, working_dir: str):
+    def __init__(self, generator_path: str, tested_file_name: str, working_dir: str, test_location: None | str = None):
         self.generator_path = generator_path
 
         self.tested_file_name = tested_file_name
 
         self.working_dir = working_dir
+
+        self.test_location = test_location
 
     def generate(self):
         module_name = path.splitext(path.basename(self.generator_path))[0]
@@ -35,6 +37,7 @@ class Generator:
             test_location = test_folders[0]
         else:
             test_location = os.path.join(self.working_dir, "tests", self.tested_file_name)
+        test_location = self.test_location if self.test_location is not None else test_location
 
         max_numbered_test = 0
 
