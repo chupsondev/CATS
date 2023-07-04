@@ -13,18 +13,6 @@ def pathify(path):
     return '"' + path + '"'
 
 
-def help(options):
-    cprint("Welcome to Chupson's Amazing Testing System (CATS)!", COLORS.VIOLET, bold=True)
-    print("This program is designed to make testing and submitting code to themis easier. The usecase"
-          "is pretty limited, so in case it's ever used by someone else, please keep in mind that there's a"
-          "high chance that it won't work for you.")
-    cprint("Usage:", COLORS.BLUE, bold=True, end=" ")
-    cprint("cats.py <file> [options]", COLORS.DEF)
-    cprint("\nOptions:", COLORS.BLUE, bold=True)
-    cprint("If no options are specified, the program will run according to the settings file", COLORS.DEF, bold=True)
-    for option in options:
-        print(options[option])
-
 
 options = {
     "build": Option("build", "Build the file (g++ compiler for c++ files)", ["-b", "--build"], True),
@@ -54,9 +42,6 @@ def main(current_options: options_parser.OptionsParser, settings, location):
         pass
     settings = settings["test"]
     options = current_options.get_options()
-    if options["help"].getValue():
-        help(options)
-        return
 
     allTestsPassed = True
     validOptionsFound = False
@@ -72,9 +57,6 @@ def main(current_options: options_parser.OptionsParser, settings, location):
     filePathCpp = tested_solution.path
 
 
-    if options["help"].getValue() == True:
-        help(current_options)
-        return
 
     if options["build"].getValue() == True:  # if the build option is active, build the file
         exitCode = buildFile(filePathNoExtension, filePathCpp)
