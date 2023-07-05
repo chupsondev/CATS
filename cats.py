@@ -46,8 +46,6 @@ def help(options: options_parser.OptionsParser, settings, location):
         cprint("Available commands: ", COLORS.DEF, bold=True)
         for command in commands:
             print(tabulate(f'{command} -- {commands[command].description}'))
-            
-
 
 
 commands = {
