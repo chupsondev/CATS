@@ -8,7 +8,6 @@ from cats_tools import cprint, COLORS, print_error, buildFile, tabulate
 from cats_tools import find_test_folders
 import importlib.util
 
-
 MAX_SEARCH_DEPTH_ = 4
 STATIC_TEST_EXTENSIONS = ['.in', '.out']
 STATIC_TEST_OUT = '.out'
@@ -43,6 +42,7 @@ def remove_from_dict(dictionary, for_removal):
 
 def tests_sort_key(test):
     return test.name
+
 
 class RunResult:
     def __init__(self, output, stderr, execution_time):
@@ -80,19 +80,37 @@ class Test:
         execution_time = end_time - start_time
         return RunResult(output, error, execution_time)
 
-
     def get_input(self):
         f = open(self.input_path, 'r')
         input = f.read()
         f.close()
         return input.split()
 
-    def print_result(self):
-        if self.result is None:
-            print_error(f"Result of test {self.name} can't be printed because result can't be found")
+    def get_expected_output(self):
+        return "unknown"
+
+    def get_actual_output(self):
+        return self.result.actual_output
+
+    def get_runtime(self) -> str:
         runtime = self.runtime_in_secs
         runtime = round(runtime, 4) if runtime is not None else 'unknown'
         runtime = str(runtime)
+        return runtime
+
+    def print_result(self, short: bool = False):
+        if self.result is None:
+            print_error(f"Result of test {self.name} can't be printed because result can't be found")
+            return
+
+        runtime = self.get_runtime()
+
+        if short:
+            self.print_short_result(runtime)
+            return
+        self.print_full_result(runtime)
+
+    def print_full_result(self, runtime: str):
         if self.result.passed:
             cprint(f'{PASSED_EMOTE} Test {self.name} ({self.type}) passed. Runtime: {runtime} secs.', COLORS.GREEN)
         else:
@@ -106,8 +124,17 @@ class Test:
             expected_output = self.get_expected_output()
             print(tabulate(expected_output))
             cprint("\tActual output:", COLORS.DEF, bold=True)
-            actual_output = self.result.actual_output
+            actual_output = self.get_actual_output()
             print(tabulate(actual_output))
+
+    def print_short_result(self, runtime: str):
+        if self.result.passed:
+            return
+
+        cprint(f'{FAILED_EMOTE} Test {self.name} ({self.type}) failed. Runtime: {runtime} secs.', COLORS.FAIL)
+        cprint("\tActual output:", COLORS.DEF, bold=True)
+        actual_output = self.get_actual_output()
+        print(tabulate(actual_output))
 
 
 class StaticTest(Test):
@@ -132,7 +159,6 @@ class StaticTest(Test):
         self.result = TestResult(passed, output)
 
 
-
 class ScriptTest(Test):
 
     def __init__(self, name, tested_file_bin_path, input_path, script_path):
@@ -153,6 +179,7 @@ class ScriptTest(Test):
         script_test_spec.loader.exec_module(script_test)
         passed = script_test.judge(input, output)
         self.result = TestResult(passed, output)
+
 
 class BruteCompareTest(Test):
 
@@ -191,7 +218,8 @@ class Tests:
     A class that represents a set of tests for a given binary file
     """
 
-    def __init__(self, tested_file_path, MAX_SEARCH_DEPTH=MAX_SEARCH_DEPTH_):
+    def __init__(self, tested_file_path, MAX_SEARCH_DEPTH=MAX_SEARCH_DEPTH_, full_verbosity: bool = True,
+                 max_num_unshortened_tests: int = 12, max_num_unshortened_lines: int = 15):
         """
         :param tested_file_path: The path to the binary file to be tested
         """
@@ -200,8 +228,10 @@ class Tests:
         self.tested_file_name = path.splitext(self.tested_file_name)[0]
         self.MAX_SEARCH_DEPTH = MAX_SEARCH_DEPTH
         self.full_verbosity = full_verbosity
+        self.max_num_unshortened_tests = max_num_unshortened_tests
+        self.max_num_unshortened_lines = max_num_unshortened_lines
         self.tests = []
-
+        self.num_passed_tests = 0
 
     def add_script_tests(self, file_sets, script_path, test_name_prefix):
 
@@ -300,11 +330,40 @@ class Tests:
 
     def run_tests(self):
         all_passed = True
+        self.num_passed_tests = 0
         self.tests.sort(key=lambda x: x.name)
+        highest_runtime = 0
+        runtime_sum = 0
+        shorten_tests: bool = len(self.tests) > self.max_num_unshortened_tests and not self.full_verbosity
+        passed_tests: list[str] = []
         for test in self.tests:
             test.judge()
-            test.print_result()
+            test.print_result(shorten_tests)
+            highest_runtime = max(highest_runtime, float(test.get_runtime()))
+            runtime_sum += float(test.get_runtime())
+            self.num_passed_tests += 1 if test.result.passed else 0
+            if test.result.passed:
+                passed_tests.append(test.name)
             all_passed = all_passed and test.result.passed
+
+        # list of passed tests if shortened (when shortening passed are not printed)
+        if shorten_tests and len(passed_tests) > 0:
+            cprint(f"{PASSED_EMOTE} Tests passed: {', '.join(passed_tests)}", COLORS.GREEN)
+
+
+        # test summary
+        percent_passed: int = (self.num_passed_tests / len(self.tests) * 100).__round__()
+        message: str = (f"{percent_passed}% of tests passed. Highest runtime: {highest_runtime}. "
+                        f"Average runtime: {(runtime_sum / len(self.tests)).__round__(4)}")
+        print()
+        cprint("■" * int(percent_passed / 10) + "□" * (10 - int(percent_passed / 10)),
+               COLORS.GREEN if percent_passed >= 50 else COLORS.FAIL)
+        if percent_passed >= 50:
+            cprint(PASSED_EMOTE + " " + message, COLORS.GREEN)
+        else:
+            cprint(FAILED_EMOTE + " " + message, COLORS.FAIL)
+
+
         return all_passed
 
     def run_test(self, test_name: str):

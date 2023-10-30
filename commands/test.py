@@ -20,8 +20,8 @@ options = {
                                "in the settings file.", ["-s", "--submit"], True),
     "test": Option("test", "Run only the test specified instead of all test available", ["-t", "--test"], False,
                    valueType=str),
-    "verbose": Option("verbose", "Print input, output, and expected output for all failed tests", ["-v", "--verbose"],
-                      True),
+    "verbose": Option("verbose", "Print all information available", ["-v", "--verbose"],
+                      False),
 }
 
 constantSettings = {
@@ -66,7 +66,7 @@ def main(current_options: options_parser.OptionsParser, settings, location):
         if exitCode != 0:
             return
 
-    tests = Tests(filePathNoExtension + ".exe")
+    tests = Tests(filePathNoExtension + ".exe", full_verbosity=options["verbose"].getValue())
     tests.set_tests(location)
 
     if options["test"].getValue() == False:
