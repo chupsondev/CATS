@@ -3,13 +3,15 @@ import option_lib
 
 class Command:
     def __init__(self, name: str, description: str, usage: str, aliases: list[str], function=None,
-                 options: list[option_lib.Option] = None):
+                 options: list[option_lib.Option] = None, global_settings=dict(), local_settings=dict()):
         self.name = name
         self.description = description
         self.usage = usage
         self.aliases = aliases
         self.function = function
         self.options = options
+        self.global_settings = global_settings
+        self.local_settings = local_settings
 
     def getUsage(self):
         return self.usage

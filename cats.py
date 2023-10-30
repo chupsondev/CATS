@@ -63,6 +63,11 @@ commands = {
                     "cats.py help <name of command>", ["h", "help"], help, dict())
 }
 
+global_settings_defaults = {
+    "themisuser": "your_login",
+    "themispass": "your_password",
+    "themisgroup": "current_themis_group"
+}
 
 def runCommand(command, options, settings, location):
     if command not in settings:
@@ -78,7 +83,7 @@ def main():
     launchLocation = os.getcwd()
     programFolder = os.path.dirname(os.path.realpath(__file__))
     settingsFileLocation = os.path.join(programFolder, "settings.json")
-    settings = settings_lib.Settings.loadSettings(commands, settingsFileLocation)
+    settings = settings_lib.Settings.loadSettings(commands, global_settings_defaults, settingsFileLocation)
 
     options = sys.argv[1:]
 

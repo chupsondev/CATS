@@ -3,19 +3,22 @@ import Command
 
 
 class Settings:
-    def __init__(self, commands: list[Command.Command], settingsPath):
+    def __init__(self, commands: list[Command.Command], global_settings, settingsPath):
         self.commands = commands
-        self.settings = Settings.loadSettings(settingsPath)
+        self.global_settings = global_settings
+        self.settings = Settings.loadSettings(commands, global_settings, settingsPath)
 
     @staticmethod
-    def loadSettings(commands, settingPath):
+    def loadSettings(commands, global_settings, settingPath):
         if not os.path.exists(settingPath):
-            Settings.createDefaultSettings(commands, settingPath)
+            Settings.createDefaultSettings(commands, global_settings, settingPath)
         return json.load(open(settingPath, "r"))
 
     @staticmethod
-    def createDefaultSettings(commands, settingsPath):
+    def createDefaultSettings(commands, global_settings, settingsPath):
         settings = {}
+        for global_setting in global_settings:
+            settings[global_setting] = global_settings[global_setting]
         for command in commands:
             commandObject = commands[command]
             commandName = commandObject.getName()
