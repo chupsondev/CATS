@@ -1,9 +1,11 @@
-import os, json
-import Command
+import json
+import os
+
+from cats import Command
 
 
 class Settings:
-    def __init__(self, commands: list[Command.Command], settingsPath):
+    def __init__(self, commands: list[Command], settingsPath):
         self.commands = commands
         self.settings = Settings.loadSettings(settingsPath)
 

@@ -1,7 +1,7 @@
 import os
 import sys
 
-from option_lib import getOption
+from cats.option_lib import getOption
 from enum import Enum
 
 

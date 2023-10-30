@@ -1,14 +1,14 @@
-from option_lib import Option
-import options_parser
-import generators.empty
-import generator as gen
-import cats_tools
+from cats.option_lib import Option
+from cats import options_parser
+import cats.generators.empty
+import cats.generator as gen
+from cats import cats_tools
 
 NEW_TEST_LOCATION_PLACEHOLDER = 'create  (or use existing) generic "tests" folder, and a problem directory in ' \
                                 'that directory'
 
 builtin_generators = {
-    "empty": generators.empty
+    "empty": cats.generators.empty
 }
 
 options = {

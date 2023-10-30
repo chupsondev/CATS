@@ -2,11 +2,11 @@
 
 import os
 import sys
-from commands import test, build, run, gentest
-from Command import Command
-import settings_lib
-from cats_tools import cprint, COLORS, tabulate
-import options_parser
+from cats.commands import test, build, run, gentest
+from cats.Command import Command
+from cats import settings_lib
+from cats.cats_tools import cprint, COLORS, tabulate
+from cats import options_parser
 
 
 class CATSException(Exception):

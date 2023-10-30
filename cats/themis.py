@@ -3,7 +3,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 import random
 import string
 import time
-from cats_tools import cprint, COLORS, tabulate
+from cats.cats_tools import cprint, COLORS, tabulate
 
 URL = "https://themis.ii.uni.wroc.pl/"
 HOST = "themis.ii.uni.wroc.pl"

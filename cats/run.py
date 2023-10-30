@@ -4,8 +4,8 @@ import time
 from os import listdir
 from os import path
 from subprocess import Popen, PIPE
-from cats_tools import cprint, COLORS, print_error, buildFile, tabulate
-from cats_tools import find_test_folders
+from cats.cats_tools import cprint, COLORS, print_error, buildFile, tabulate
+from cats.cats_tools import find_test_folders
 import importlib.util
 
 

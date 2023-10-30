@@ -1,12 +1,12 @@
-from run import Tests
-from run import TestResult
-import themis
-from option_lib import Option, getOption
+from cats.run import Tests
+from cats.run import TestResult
+from cats import themis
+from cats.option_lib import Option, getOption
 import sys
 import os
 import webbrowser
-from cats_tools import *
-import options_parser
+from cats.cats_tools import *
+from cats import options_parser
 
 
 def pathify(path):

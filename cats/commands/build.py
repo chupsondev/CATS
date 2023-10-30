@@ -1,4 +1,4 @@
-from cats_tools import *
+from cats.cats_tools import *
 import os, sys
 
 options = {}

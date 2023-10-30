@@ -1,4 +1,4 @@
-import option_lib
+from cats import option_lib
 
 
 class Command:

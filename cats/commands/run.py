@@ -1,5 +1,5 @@
-from cats_tools import *
-from option_lib import Option
+from cats.cats_tools import *
+from cats.option_lib import Option
 
 options = {
     "input": Option("input", "Run the program with input specified in test files.", ["-i", "--input"], False,

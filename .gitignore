@@ -8,3 +8,5 @@ setup.sh
 tests/*
 settings.json
 .DS_Store
+build/*
+CATS.egg-info/*

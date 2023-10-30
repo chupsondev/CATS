@@ -1,7 +1,7 @@
 import os.path
 
-import cats_tools
-from cats_tools import find_test_folders
+from cats import cats_tools
+from cats.cats_tools import find_test_folders
 from os import path
 import importlib.util
 import sys

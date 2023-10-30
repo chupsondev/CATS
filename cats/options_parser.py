@@ -1,5 +1,5 @@
-import Command
-from option_lib import Option, getOption
+from cats import Command
+from cats.option_lib import Option, getOption
 
 SHORT_OPTION = 1
 LONG_OPTION = 2
