@@ -35,11 +35,14 @@ constantSettings = {
 
 def main(current_options: options_parser.OptionsParser, settings, location):
     try:
-        themis_group: str = settings["themisGroup"]
-        themis_user: str = settings["themisUser"]
-        themis_pass: str = settings["themisPass"]
+        themis_group: str = settings["themisgroup"]
+        themis_user: str = settings["themisuser"]
+        themis_pass: str = settings["themispass"]
     except KeyError:
-        pass
+        themis_group: str = ""
+        themis_user: str = ""
+        themis_pass: str = ""
+
     settings = settings["test"]
     options = current_options.get_options()
 
@@ -68,11 +71,9 @@ def main(current_options: options_parser.OptionsParser, settings, location):
 
     if options["test"].getValue() == False:
         allTestsPassed = tests.run_tests()
-        tests.print_results()
 
     if options["test"].getValue() is not False:
         allTestsPassed = tests.run_test(options["test"].getValue())
-        tests.print_results()
 
     if options["submit"].getValue() == True:
         if allTestsPassed:  # if all tests passed, or none test were run, submit the file

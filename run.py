@@ -88,6 +88,8 @@ class Test:
         return input.split()
 
     def print_result(self):
+        if self.result is None:
+            print_error(f"Result of test {self.name} can't be printed because result can't be found")
         runtime = self.runtime_in_secs
         runtime = round(runtime, 4) if runtime is not None else 'unknown'
         runtime = str(runtime)
@@ -197,6 +199,7 @@ class Tests:
         self.tested_file_name = path.basename(tested_file_path)
         self.tested_file_name = path.splitext(self.tested_file_name)[0]
         self.MAX_SEARCH_DEPTH = MAX_SEARCH_DEPTH
+        self.full_verbosity = full_verbosity
         self.tests = []
 
 
@@ -300,6 +303,7 @@ class Tests:
         self.tests.sort(key=lambda x: x.name)
         for test in self.tests:
             test.judge()
+            test.print_result()
             all_passed = all_passed and test.result.passed
         return all_passed
 
@@ -308,11 +312,12 @@ class Tests:
         for test in self.tests:
             if test.name == test_name:
                 test.judge()
+                test.print_result()
                 return test.result.passed
         print_error('Test ' + test_name + ' not found.')
         return False
 
-    def print_results(self):
+    def print_results(self):  # function should be obsolete, keeping just in case
         for test in self.tests:
             if test.result is not None:
                 test.print_result()
