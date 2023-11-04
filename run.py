@@ -352,7 +352,7 @@ class Tests:
 
 
         # test summary
-        percent_passed: int = (self.num_passed_tests / len(self.tests) * 100).__round__()
+        percent_passed = (self.num_passed_tests / len(self.tests) * 100).__round__(2)
         message: str = (f"{percent_passed}% of tests passed. Highest runtime: {highest_runtime}. "
                         f"Average runtime: {(runtime_sum / len(self.tests)).__round__(4)}")
         print()
