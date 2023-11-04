@@ -333,6 +333,7 @@ class Tests:
         self.num_passed_tests = 0
         self.tests.sort(key=lambda x: x.name)
         highest_runtime = 0
+        highest_runtime_name = ''
         runtime_sum = 0
         shorten_tests: bool = len(self.tests) > self.max_num_unshortened_tests and not self.full_verbosity
         passed_tests: list[str] = []
@@ -340,6 +341,8 @@ class Tests:
             test.judge()
             test.print_result(shorten_tests)
             highest_runtime = max(highest_runtime, float(test.get_runtime()))
+            highest_runtime_name = highest_runtime_name if highest_runtime > float(test.get_runtime()) \
+                else test.name
             runtime_sum += float(test.get_runtime())
             self.num_passed_tests += 1 if test.result.passed else 0
             if test.result.passed:
@@ -353,7 +356,7 @@ class Tests:
 
         # test summary
         percent_passed = (self.num_passed_tests / len(self.tests) * 100).__round__(2)
-        message: str = (f"{percent_passed}% of tests passed. Highest runtime: {highest_runtime}. "
+        message: str = (f"{percent_passed}% of tests passed. Highest runtime: {highest_runtime} ({highest_runtime_name}). "
                         f"Average runtime: {(runtime_sum / len(self.tests)).__round__(4)}")
         print()
         cprint("■" * int(percent_passed / 10) + "□" * (10 - int(percent_passed / 10)),
