@@ -8,6 +8,7 @@ import webbrowser
 from cats_tools import *
 import options_parser
 
+INFINITY = 99999999
 
 def pathify(path):
     return '"' + path + '"'
@@ -66,7 +67,8 @@ def main(current_options: options_parser.OptionsParser, settings, location):
         if exitCode != 0:
             return
 
-    tests = Tests(filePathNoExtension + ".exe", full_verbosity=options["verbose"].getValue())
+    tests = Tests(filePathNoExtension + ".exe", full_verbosity=options["verbose"].getValue(),
+                  max_num_unshortened_lines=INFINITY if options["verbose"].getValue() else 15)
     tests.set_tests(location)
 
     if options["test"].getValue() == False:

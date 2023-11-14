@@ -20,6 +20,7 @@ FAILED_EMOTE = '❌'
 STATIC_TEST = 'static'
 BRUTE_COMPARE_TEST = 'brute compare'
 SCRIPT_TEST = 'script'
+MAX_NUM_UNSHORTENED_LINES = 15
 
 
 def is_static_test_complete(files) -> bool:
@@ -70,6 +71,7 @@ class Test:
         self.input_path = input_path
         self.runtime_in_secs = None
         self.type = "generic"
+        self.max_num_unshortened_lines = MAX_NUM_UNSHORTENED_LINES
 
     def run(self):
         start_time = time.time()
@@ -84,13 +86,18 @@ class Test:
         f = open(self.input_path, 'r')
         input = f.read()
         f.close()
-        return input.split()
+        input = input.split()
+        return input
 
     def get_expected_output(self):
         return "unknown"
 
     def get_actual_output(self):
-        return self.result.actual_output
+        ac = self.result.actual_output
+        if len(ac) > self.max_num_unshortened_lines:
+            ac = ac[:self.max_num_unshortened_lines]
+            ac.append(COLORS.BLUE + '...' + COLORS.ENDC)
+        return ac
 
     def get_runtime(self) -> str:
         runtime = self.runtime_in_secs
@@ -98,7 +105,8 @@ class Test:
         runtime = str(runtime)
         return runtime
 
-    def print_result(self, short: bool = False):
+    def print_result(self, short: bool = False, max_num_unshortened_lines: int = MAX_NUM_UNSHORTENED_LINES):
+        self.max_num_unshortened_lines = max_num_unshortened_lines
         if self.result is None:
             print_error(f"Result of test {self.name} can't be printed because result can't be found")
             return
@@ -339,7 +347,7 @@ class Tests:
         passed_tests: list[str] = []
         for test in self.tests:
             test.judge()
-            test.print_result(shorten_tests)
+            test.print_result(shorten_tests, self.max_num_unshortened_lines)
             highest_runtime = max(highest_runtime, float(test.get_runtime()))
             highest_runtime_name = highest_runtime_name if highest_runtime > float(test.get_runtime()) \
                 else test.name
