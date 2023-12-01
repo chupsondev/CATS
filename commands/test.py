@@ -52,22 +52,37 @@ def main(current_options: options_parser.OptionsParser, settings, location):
     
     file = current_options.get_arguments()[0]
 
-    tested_solution = SolutionFile(file)
-    fileNameNoExtension = tested_solution.name
-    filePathNoExtension = tested_solution.get_path_without_ext()
-    fileNameExe = tested_solution.name + ".exe"
-    filePathExe = tested_solution.get_path_without_ext() + ".exe"
-    fileNameCpp = tested_solution.name
-    filePathCpp = tested_solution.path
+    # okay so before i do this i want to apologise to myself and anyone else who might be reading this code
+    # what follows is the result of me being to lazy to do this thing in a better way
+    # i only need this functionality for a very specific use-case that neither me nor anyone else will probably
+    # ever encounter again
+
+    build_cargo: bool = False
+    if len(file.split(".")) >= 2 and file.split(".")[1] == "cargo":
+        build_cargo = True
+        filePathNoExtension = os.path.join(os.getcwd(), "target/debug/")
+        filePathNoExtension = os.path.join(filePathNoExtension, file.split(".")[0])
+        filePathCpp = filePathNoExtension
+
+    else:
+        tested_solution = SolutionFile(file)
+        fileNameNoExtension = tested_solution.name
+        filePathNoExtension = tested_solution.get_path_without_ext()
+        fileNameExe = tested_solution.name + ".exe"
+        filePathExe = tested_solution.get_path_without_ext() + ".exe"
+        fileNameCpp = tested_solution.name
+        filePathCpp = tested_solution.path
+
 
 
 
     if options["build"].getValue() == True:  # if the build option is active, build the file
-        exitCode = buildFile(filePathNoExtension, filePathCpp)
+        exitCode = buildFile(filePathNoExtension, filePathCpp, build_cargo)
         if exitCode != 0:
             return
 
-    tests = Tests(filePathNoExtension + ".exe", full_verbosity=options["verbose"].getValue(),
+    suffix = "" if build_cargo else ".exe"
+    tests = Tests(filePathNoExtension + suffix, full_verbosity=options["verbose"].getValue(),
                   max_num_unshortened_lines=INFINITY if options["verbose"].getValue() else 15)
     tests.set_tests(location)
 
