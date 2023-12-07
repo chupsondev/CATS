@@ -23,3 +23,6 @@ class TestRun(unittest.TestCase):
         test.runtime_in_secs = None
         self.assertEqual("unknown", test.get_runtime())
 
+    def test_failing(self):
+        self.assertEqual(True, False)
+
