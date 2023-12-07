@@ -5,7 +5,6 @@ import os
 sys.path.append("..")
 
 import run
-from cats_tools import buildFile
 
 
 class TestRun(unittest.TestCase):
@@ -22,7 +21,4 @@ class TestRun(unittest.TestCase):
         self.assertEqual("0.4458", test.get_runtime())
         test.runtime_in_secs = None
         self.assertEqual("unknown", test.get_runtime())
-
-    def test_failing(self):
-        self.assertEqual(True, False)
 
